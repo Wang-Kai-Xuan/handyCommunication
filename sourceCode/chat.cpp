@@ -6,6 +6,7 @@
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QModelIndex>
+
 void Chat::newUI()
 {
     glay_left = new QGridLayout;
@@ -15,6 +16,7 @@ void Chat::newUI()
     input_message = new QTextEdit;
     hideOrShow_btn = new QPushButton(tr("显示/隐藏(&H)"));
     send_btn = new QPushButton(tr("发送(&S)"));
+    close_btn = new QPushButton(tr("退出(&E)"));
     showName_lab = new QLabel(tr("Unknown"));
     hlay = new QHBoxLayout;
 }
@@ -26,7 +28,8 @@ void Chat::setUI()
     glay_left->addWidget(input_message,2,0,1,2);
     glay_left->addWidget(hideOrShow_btn,3,0,1,1);
     glay_left->addWidget(send_btn,3,1,1,1);
-    glay_right->addWidget(tree_view);
+    glay_right->addWidget(tree_view,0,0,1,2);
+    glay_right->addWidget(close_btn,1,1,1,1);
     hlay->addLayout(glay_left);
     hlay->addLayout(glay_right);
     this->setLayout(hlay);
@@ -48,14 +51,16 @@ void Chat::onSendMessage()
     sendData.append(input_message->document()->toPlainText());
     quint64 dataSize =  udpSocket->writeDatagram(sendData.data(),sendData.size(),QHostAddress::Broadcast,PORT);
     if(dataSize == -1){
-        qDebug()<<udpSocket->error();
-        qDebug()<<udpSocket->errorString();
+        qDebug()<<"onSendMessage="<<udpSocket->error();
+        qDebug()<<"onSendMessage="<<udpSocket->errorString();
     }else{
-        qDebug()<<"-------------------------------";
-        qDebug()<<"数据报发送成功,字节数="<<dataSize;
-        qDebug()<<"sendData="<<sendData;
-        qDebug()<<"sendData.data="<<sendData.data();
-        qDebug()<<"-------------------------------";
+        if(isNeedDebug){
+            qDebug()<<"-------------------------------";
+            qDebug()<<"数据报发送成功,字节数="<<dataSize;
+            qDebug()<<"sendData="<<sendData;
+            qDebug()<<"sendData.data="<<sendData.data();
+            qDebug()<<"-------------------------------";
+        }
     }
     input_message->clear();
 }
@@ -68,20 +73,29 @@ void Chat::onSelectUser(const QModelIndex & index)
 void Chat::onReadMessage()
 {
     recvData.clear();
-    qDebug()<<"准备接收数据";
     while(udpSocket->hasPendingDatagrams()){
         recvData.resize(udpSocket->pendingDatagramSize());
         quint64 dataSize = udpSocket->readDatagram(recvData.data(),recvData.size());
         if(dataSize == -1){
             qDebug()<<udpSocket->errorString();
         }else{
-            qDebug()<<"-------------------------------";
-            qDebug()<<"数据报接收成功,字节数="<<dataSize;
-            qDebug()<<"recvData="<<recvData.data();
-            qDebug()<<"-------------------------------";
+            if(isNeedDebug){
+                qDebug()<<"-------------------------------";
+                qDebug()<<"数据报接收成功,字节数="<<dataSize;
+                qDebug()<<"recvData="<<recvData.data();
+                qDebug()<<"-------------------------------";
+            }
         }
     }
     show_message->append(recvData.data());
+}
+
+void Chat::onExit()
+{
+    QSqlQuery sql(sysDB);
+    sql.exec(QString("update user set isOnline = 0 where id = '%1';").arg(userId));
+    sysDB.close();
+    this->close();
 }
 
 void Chat::setConnect()
@@ -93,12 +107,13 @@ void Chat::setConnect()
     connect(udpSocket,SIGNAL(readyRead()),this,SLOT(onReadMessage()));
     connect(udpSocket,SIGNAL(readyRead()),this,SLOT(onReadMessage()));
     connect(send_btn,SIGNAL(clicked(bool)),this,SLOT(onSendMessage()));
+    connect(close_btn,SIGNAL(clicked(bool)),this,SLOT(onExit()));
 }
 
 void Chat::loadUser()
 {
     QSqlQuery sql(sysDB);
-    if(sql.exec("select id from user where isOnline = 0;")){
+    if(sql.exec("select id from user where isOnline = 1;")){
         while(sql.next()){
             treeModel->appendRow(new QStandardItem(tr("%1").arg(sql.value(0).toString())));
         }
@@ -116,12 +131,17 @@ void Chat::newSth()
 
 void Chat::init()
 {
+    isNeedDebug = true;
+    sysDB=QSqlDatabase::addDatabase("QSQLITE");
+    sysDB.setDatabaseName("chat.db");
+    if(!sysDB.open()){
+        qDebug()<<"数据库打开出错"<<sysDB.lastError();
+
+    }
     treeModel->setHorizontalHeaderLabels(QStringList()<<QStringList("在线人员")<<QStringList("Ip(局域网)")<<QStringList("Pc User"));
     tree_view->setContextMenuPolicy(Qt::CustomContextMenu);
-    if(udpSocket->bind(PORT,QUdpSocket::ShareAddress|QUdpSocket::ReuseAddressHint)){
-        qDebug()<<"绑定端口成功";
-    }else{
-        qDebug()<<"绑定端口成功";
+    if(!udpSocket->bind(PORT,QUdpSocket::ShareAddress|QUdpSocket::ReuseAddressHint)){
+        qDebug()<<"绑定端口失败";
     }
 }
 
@@ -131,10 +151,10 @@ void Chat::broadCast()
     udpSocket->writeDatagram(sendData.data(),sendData.size(),QHostAddress::Broadcast,PORT);
 }
 
-Chat::Chat(QSqlDatabase & value,QWidget *parent)
+Chat::Chat(QString &Id, QWidget *parent)
     : QWidget(parent)
 {
-    sysDB = value;
+    userId = Id;
     newUI();
     newSth();
     setUI();
@@ -142,13 +162,10 @@ Chat::Chat(QSqlDatabase & value,QWidget *parent)
     setConnect();
     loadUser();
     broadCast();
-    show_message->append(tr("ip=%1").arg(getLocalIP()));
-    show_message->append(tr("pc name=%1").arg(getUserName()));
 }
 
 Chat::~Chat()
 {
-
 }
 
 QString Chat::getLocalIP()

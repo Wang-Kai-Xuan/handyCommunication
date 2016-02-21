@@ -8,6 +8,7 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QSqlDatabase>
+
 class Start : public QWidget
 {
     Q_OBJECT
@@ -23,15 +24,15 @@ public:
     QGridLayout * glay;
 public:
     QSqlDatabase sysDB;
+    bool isNeedDebug;
 public:
-    explicit Start(QSqlDatabase &vaule, QWidget *parent = 0);
-
+    explicit Start(QWidget *parent = 0);
     void setUI();
-
     void setConnect();
-
     void check();
-
+    void allowLogin(QSqlQuery sql);
+    void enterChat();
+    void initDB();
 signals:
 
 public slots:

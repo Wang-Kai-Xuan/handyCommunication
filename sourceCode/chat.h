@@ -23,7 +23,7 @@ class Chat : public QWidget
     Q_OBJECT
 
 public:
-    Chat(QSqlDatabase & value,QWidget *parent = 0);
+    Chat(QString &Id, QWidget *parent = 0);
     ~Chat();
 public:
     QGridLayout * glay_left;
@@ -33,6 +33,7 @@ public:
     QTextEdit * input_message;
     QPushButton * hideOrShow_btn;
     QPushButton * send_btn;
+    QPushButton * close_btn;
     QLabel * showName_lab;
     QHBoxLayout * hlay;
 
@@ -57,7 +58,9 @@ private:
     QUdpSocket * udpSocket;
     QByteArray recvData;
     QByteArray sendData;
+    QString userId;
     #define PORT 12060
+    bool isNeedDebug;
 signals:
 
 public slots:
@@ -65,6 +68,7 @@ public slots:
     void onSendMessage(void);
     void onSelectUser(const QModelIndex &index);
     void onReadMessage(void);
+    void onExit(void);
 };
 
 #endif // SERVER_H
