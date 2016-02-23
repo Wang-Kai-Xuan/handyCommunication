@@ -1,8 +1,10 @@
 #ifndef SERVER_H
 #define SERVER_H
+#include "about.h"
 #include "common.h"
 #include <ioframe.h>
 #include <ilabel.h>
+#include <QMessageBox>
 #include <QAbstractSocket>
 #include <QKeyEvent>
 #include <QEvent>
@@ -43,6 +45,7 @@ public:
     QLabel * message_input_lab;
     QHBoxLayout * hlay;
     ILabel * self_id_lab;
+    ILabel * about_lab;
     void newUI();
     void setUI();
     void setConnect();
@@ -63,6 +66,11 @@ public:
 
     void clearRecvBuf();
 
+    void setSelfUI(Ioframe* self_info);
+
+
+    void setSelfConnect(Ioframe* self_info);
+
 private:
     QSqlDatabase sysDB;
     QStandardItemModel *treeModel;
@@ -79,8 +87,9 @@ private:
     COMMAND command_recv;
     QString content_recv;
     QStringList strList;
+    Ioframe * self_info;
+    void closeEvent(QCloseEvent *event);
     void keyPressEvent(QKeyEvent *event);
-    void keyReleaseEvent(QKeyEvent *event);
 signals:
 
 public slots:
@@ -90,6 +99,8 @@ public slots:
     void onReadMessage(void);
     void onExit(void);
     void onSelf(void);
+    void onAbout(void);
+    void setSelfName();
 };
 
 #endif // SERVER_H

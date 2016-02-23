@@ -7,13 +7,17 @@
 void Start::setUI()
 {
     show_lab = new QLabel(tr("首次登录将会自动注册"));
-    show_id = new QLabel(tr("用户名:"));
-    show_passwd = new QLabel(tr("用户密码:"));
+    show_id = new QLabel(tr("用户名(&U):"));
+    show_passwd = new QLabel(tr("用户密码(&P):"));
     lin_id = new QLineEdit;
     lin_passwd = new QLineEdit;
     okBtn = new QPushButton(tr("设置(&S)"));
     cancelBtn = new QPushButton(tr("取消(&C)"));
     glay = new QGridLayout;
+
+    show_id->setBuddy(lin_id);
+    show_passwd->setBuddy(lin_passwd);
+    lin_passwd->setEchoMode(QLineEdit::Password);
 
     glay->addWidget(show_lab,0,0,1,2);
     glay->addWidget(show_id,1,0,1,1);
@@ -25,17 +29,17 @@ void Start::setUI()
 
     this->setLayout(glay);
     this->setWindowTitle(tr("登录 -- 局域网通讯工具"));
+    this->resize(300,120);
     this->setWindowFlags(Qt::WindowTitleHint);
+    this->setWindowIcon(QIcon(":/new/windowIcon/icon/WindowIcon.png"));
 }
 
 void Start::enterChat()
 {
-//    QSqlDatabase::removeDatabase("connectSystemDB");
     sysDB.close();
     QString id = loginMessage.at(0);
     Chat * chat = new Chat(id);
     chat->show();
-
     this->close();
 }
 
@@ -43,7 +47,7 @@ void Start::allowLogin(QSqlQuery sql)
 {
     if(!sql.exec(QString("update user set status = '在线' where id = '%1';").arg(loginMessage.at(0)))){
         QMessageBox msg;
-        msg.critical(this,tr("提示"),tr("出错了，请重试"));
+        msg.warning(this,tr("提示"),tr("密码错误，请重试"));
     }else{
         enterChat();
     }
@@ -86,11 +90,11 @@ void Start::check()
         qDebug()<<"isRegister="<<isRegister;
         qDebug()<<"isOnline="<<isOnline;
     }
-    // 如果已经注册且没有在线，则可以登录
+
     if(isRegister){
         if(isOnline){
             QMessageBox msg;
-            msg.critical(this,tr("提示"),tr("该用户已登录"));
+            msg.warning(this,tr("提示"),tr("该用户已登录"));
         }else{
             // 更新状态，isOnline: 1表示在线，0表示不在线
             allowLogin(sql);
@@ -98,13 +102,12 @@ void Start::check()
     }else{
         if(sql.exec(QString("insert into user(id,name,password,status)values(%1,'待用户设定',%2,'在线')").arg(loginMessage.at(0)).arg(loginMessage.at(1)))){
             QMessageBox msg;
-            msg.critical(this,tr("提示"),tr("系统自动帮您注册"));
+            msg.information(this,tr("提示"),tr("系统自动帮您注册"));
             enterChat();
         }else{
             qDebug()<<sql.lastError();
             QMessageBox msg;
-            msg.critical(this,tr("提示"),tr("系统无法自动帮您注册"));
-            this->close();
+            msg.critical(this,tr("提示"),tr("该用户编号已被占用，如果不是该用户，可注册其他编号"));
         }
     }
 }

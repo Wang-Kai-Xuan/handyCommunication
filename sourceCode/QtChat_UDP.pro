@@ -16,15 +16,20 @@ SOURCES += main.cpp \
     chat.cpp \
     start.cpp \
     ilabel.cpp \
-    ioframe.cpp
+    ioframe.cpp \
+    about.cpp
 
 HEADERS  += \
     chat.h \
     start.h \
     ilabel.h \
     ioframe.h \
-    common.h
+    common.h \
+    about.h
 
 CONFIG += mobility
 MOBILITY = 
+
+RESOURCES += \
+    resource.qrc
 

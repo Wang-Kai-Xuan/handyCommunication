@@ -52,6 +52,7 @@ void Ioframe::setUI()
     glay->addWidget(okBtn,9,0,1,1);
     glay->addWidget(cancelBtn,9,1,1,1);
     this->setLayout(glay);
+    this->setWindowIcon(QIcon(":/new/windowIcon/icon/WindowIcon.png"));
 }
 
 void Ioframe::setConnnect()

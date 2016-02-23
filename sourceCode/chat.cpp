@@ -21,8 +21,10 @@ void Chat::newUI()
     close_btn = new QPushButton(tr("退出(&E)"));
     message_show_lab = new QLabel(tr("消息显示:"));
     message_input_lab = new QLabel(tr("消息输入:"));
-    self_id_lab = new ILabel();
+    self_id_lab = new ILabel;
     hlay = new QHBoxLayout;
+    self_info = new Ioframe;
+    about_lab = new ILabel;
 }
 
 void Chat::setUI()
@@ -31,20 +33,20 @@ void Chat::setUI()
     glay_left->addWidget(show_message,1,0,1,2);
     glay_left->addWidget(message_input_lab,2,0,1,2);
     glay_left->addWidget(input_message,3,0,1,2);
-
-//    glay_left->addWidget(hideOrShow_btn,4,0,1,1);
     glay_left->addWidget(send_btn,4,0,1,1);
-    glay_right->addWidget(self_id_lab,0,1,1,2);
+
+    glay_right->addWidget(self_id_lab,0,1,1,1);
+    glay_right->addWidget(about_lab,0,2,1,1);
     glay_right->addWidget(tree_view,1,1,1,2);
     glay_right->addWidget(close_btn,2,1,1,1);
 
+    about_lab->setText(tr("关于"));
     hlay->addLayout(glay_left);
     hlay->addLayout(glay_right);
-    hlay->setSizeConstraint(QLayout::SetFixedSize);
     this->setLayout(hlay);
-    this->setWindowTitle(tr("简讯"));
-    this->setWindowFlags(Qt::WindowTitleHint);
-//    this->resize(800,600);
+    this->setWindowTitle(tr("简讯 - 简单的局域网通讯工具"));
+    this->setWindowIcon(QIcon(":/new/windowIcon/icon/WindowIcon.png"));
+    this->resize(800,600);
 }
 
 void Chat::onCloseBtn()
@@ -66,27 +68,33 @@ void Chat::clearSendBuf()
 
 void Chat::onSendMessage()
 {
-    clearSendBuf();
-    command_send = GROUP_CHAT;
-    content_send.append(userId);
-    content_send.append(SEPARATE);
-    content_send.append(input_message->document()->toPlainText());
-    sendData.append(command_send);
-    sendData.append(content_send);
-    qint64 dataSize =  udpSocket->writeDatagram(sendData.data(),sendData.size(),QHostAddress::Broadcast,PORT);
-    if(dataSize == -1){
-        qDebug()<<"onSendMessage="<<udpSocket->error();
-        qDebug()<<"onSendMessage="<<udpSocket->errorString();
+    if(input_message->document()->isEmpty()){
+        QMessageBox msg;
+        msg.warning(this,"提示","不能发送空消息");
+        msg.show();
     }else{
-        if(isNeedDebug){
-            qDebug()<<"-------------------------------";
-            qDebug()<<"数据报发送成功,字节数="<<dataSize;
-            qDebug()<<"sendData="<<sendData;
-            qDebug()<<"sendData.data="<<sendData.data();
-            qDebug()<<"-------------------------------";
+        clearSendBuf();
+        command_send = GROUP_CHAT;
+        content_send.append(userId);
+        content_send.append(SEPARATE);
+        content_send.append(input_message->document()->toPlainText());
+        sendData.append(command_send);
+        sendData.append(content_send);
+        qint64 dataSize =  udpSocket->writeDatagram(sendData.data(),sendData.size(),QHostAddress::Broadcast,PORT);
+        if(dataSize == -1){
+            qDebug()<<"onSendMessage="<<udpSocket->error();
+            qDebug()<<"onSendMessage="<<udpSocket->errorString();
+        }else{
+            if(isNeedDebug){
+                qDebug()<<"-------------------------------";
+                qDebug()<<"数据报发送成功,字节数="<<dataSize;
+                qDebug()<<"sendData="<<sendData;
+                qDebug()<<"sendData.data="<<sendData.data();
+                qDebug()<<"-------------------------------";
+            }
         }
+        input_message->clear();
     }
-    input_message->clear();
 }
 
 void Chat::onSelectUser(const QModelIndex & index)
@@ -103,7 +111,7 @@ void Chat::handleSystemMessage()
 void Chat::handleGroupChat()
 {
     strList = content_recv.split(SEPARATE);
-    show_message->append(QString("<%1> %2").arg(strList.at(0)).arg(strList.at(1)));
+    show_message->append(QString("<群聊 %1> %2").arg(strList.at(0)).arg(strList.at(1)));
 }
 
 void Chat::handleMessage()
@@ -154,14 +162,63 @@ void Chat::onExit()
 {
     QSqlQuery sql(sysDB);
     sql.exec(QString("update user set status = '离线' where id = '%1';").arg(userId));
-    sysDB.close();
     this->close();
+}
+
+void Chat::setSelfName()
+{
+    QString str = self_info->lin0->text();
+    QSqlQuery sql(sysDB);
+    if(!sql.exec(QString("update user set name = '%1' where id = '%2';").arg(str).arg(userId))){
+        QMessageBox msg;
+        msg.information(this,"提示","抱歉，革命尚未成功，重新再来");
+        msg.show();
+    }else{
+        self_info->close();
+        loadUser();
+    }
+}
+
+void Chat::setSelfConnect(Ioframe* self_info)
+{
+    connect(self_info->okBtn,SIGNAL(clicked(bool)),this,SLOT(setSelfName()));
+}
+
+void Chat::setSelfUI(Ioframe* self_info)
+{
+    self_info->lab1->hide();
+    self_info->lin1->hide();
+    self_info->lab2->hide();
+    self_info->lin2->hide();
+    self_info->lab3->hide();
+    self_info->lin3->hide();
+    self_info->lab4->hide();
+    self_info->lin4->hide();
+    self_info->lab5->hide();
+    self_info->lin5->hide();
+    self_info->lab6->hide();
+    self_info->lin6->hide();
+    self_info->lab7->hide();
+    self_info->lin7->hide();
+    self_info->lab8->hide();
+    self_info->lin8->hide();
+    self_info->setWindowTitle(tr("修改用户名字"));
+    self_info->lab0->setText(tr("名字(&M):"));
+    self_info->lab0->setBuddy(self_info->lin0);
 }
 
 void Chat::onSelf()
 {
-//    Ioframe * self_info = new Ioframe;
-//    self_info->show();
+    setSelfUI(self_info);
+    setSelfConnect(self_info);
+    setSelfName();
+    self_info->show();
+}
+
+void Chat::onAbout()
+{
+    About * about = new About;
+    about->show();
 }
 
 void Chat::setConnect()
@@ -174,6 +231,7 @@ void Chat::setConnect()
     connect(send_btn,SIGNAL(clicked(bool)),this,SLOT(onSendMessage()));
     connect(close_btn,SIGNAL(clicked(bool)),this,SLOT(onExit()));
     connect(self_id_lab,SIGNAL(click()),this,SLOT(onSelf()));
+    connect(about_lab,SIGNAL(click()),this,SLOT(onAbout()));
 }
 
 void Chat::loadUser()
@@ -210,7 +268,6 @@ void Chat::init()
     sysDB.setDatabaseName("chat.db");
     if(!sysDB.open()){
         qDebug()<<"数据库打开出错"<<sysDB.lastError();
-
     }
     tree_view->setContextMenuPolicy(Qt::CustomContextMenu);
     if(!udpSocket->bind(PORT,QUdpSocket::ShareAddress|QUdpSocket::ReuseAddressHint)){
@@ -274,18 +331,15 @@ QString Chat::getUserName()
     return "unknown";
 }
 
-void Chat::keyPressEvent(QKeyEvent *event)
+void Chat::closeEvent(QCloseEvent *event)
 {
-    if(event->key() == (Qt::Key_Alt && Qt::Key_F4)){
-        qDebug()<<"ALT + F4";
-//        onExit();
-    }
+    onExit();
+    event->accept();
 }
 
-void Chat::keyReleaseEvent(QKeyEvent *event)
+void Chat::keyPressEvent(QKeyEvent *event)
 {
-    if(event->key() == (Qt::Key_Alt && Qt::Key_F4)){
-        qDebug()<<"ALT + F4";
-//        onExit();
+    if(event->key() == Qt::Key_Enter){
+        qDebug()<<"enter";
     }
 }
