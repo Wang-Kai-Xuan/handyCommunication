@@ -14,11 +14,16 @@ TEMPLATE = app
 
 SOURCES += main.cpp \
     chat.cpp \
-    start.cpp
+    start.cpp \
+    ilabel.cpp \
+    ioframe.cpp
 
 HEADERS  += \
     chat.h \
-    start.h
+    start.h \
+    ilabel.h \
+    ioframe.h \
+    common.h
 
 CONFIG += mobility
 MOBILITY = 

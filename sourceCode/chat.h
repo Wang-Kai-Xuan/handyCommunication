@@ -1,6 +1,11 @@
 #ifndef SERVER_H
 #define SERVER_H
+#include "common.h"
+#include <ioframe.h>
+#include <ilabel.h>
 #include <QAbstractSocket>
+#include <QKeyEvent>
+#include <QEvent>
 #include <QWidget>
 #include <QDialog>
 #include <QProcess>
@@ -34,24 +39,30 @@ public:
     QPushButton * hideOrShow_btn;
     QPushButton * send_btn;
     QPushButton * close_btn;
-    QLabel * showName_lab;
+    QLabel * message_show_lab;
+    QLabel * message_input_lab;
     QHBoxLayout * hlay;
-
+    ILabel * self_id_lab;
     void newUI();
-
     void setUI();
-
     void setConnect();
-
     void loadUser();
-
     void newSth();
-
     void init();
-
     void broadCast(void);
     QString getLocalIP();
     QString getUserName();
+
+    void handleMessage();
+
+    void handleSystemMessage();
+
+    void handleGroupChat();
+
+    void clearSendBuf();
+
+    void clearRecvBuf();
+
 private:
     QSqlDatabase sysDB;
     QStandardItemModel *treeModel;
@@ -61,6 +72,15 @@ private:
     QString userId;
     #define PORT 12060
     bool isNeedDebug;
+    QList<QStandardItem *> modelList;
+
+    COMMAND command_send;
+    QString content_send;
+    COMMAND command_recv;
+    QString content_recv;
+    QStringList strList;
+    void keyPressEvent(QKeyEvent *event);
+    void keyReleaseEvent(QKeyEvent *event);
 signals:
 
 public slots:
@@ -69,6 +89,7 @@ public slots:
     void onSelectUser(const QModelIndex &index);
     void onReadMessage(void);
     void onExit(void);
+    void onSelf(void);
 };
 
 #endif // SERVER_H

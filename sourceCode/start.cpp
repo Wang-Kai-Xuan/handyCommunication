@@ -24,7 +24,7 @@ void Start::setUI()
     glay->addWidget(cancelBtn,3,1,1,1);
 
     this->setLayout(glay);
-    this->setWindowTitle(tr("提示"));
+    this->setWindowTitle(tr("登录 -- 局域网通讯工具"));
     this->setWindowFlags(Qt::WindowTitleHint);
 }
 
@@ -41,7 +41,7 @@ void Start::enterChat()
 
 void Start::allowLogin(QSqlQuery sql)
 {
-    if(!sql.exec(QString("update user set isOnline = 1 where id = '%1';").arg(loginMessage.at(0)))){
+    if(!sql.exec(QString("update user set status = '在线' where id = '%1';").arg(loginMessage.at(0)))){
         QMessageBox msg;
         msg.critical(this,tr("提示"),tr("出错了，请重试"));
     }else{
@@ -70,12 +70,12 @@ void Start::check()
             }
         }
     }
-    if(sql.exec(QString("select isOnline from user where id = '%1';").arg(loginMessage.at(0)))){
+    if(sql.exec(QString("select status from user where id = '%1';").arg(loginMessage.at(0)))){
         while(sql.next()){
             if(isNeedDebug){
                 qDebug()<<"用户状态="<<sql.value(0).toString();
             }
-            if(sql.value(0) == 1){
+            if(sql.value(0) == "在线"){
                 isOnline= true;
             }else{
                 isOnline= false;
@@ -96,7 +96,7 @@ void Start::check()
             allowLogin(sql);
         }
     }else{
-        if(sql.exec(QString("insert into user(id,password,isOnline)values(%1,%2,1)").arg(loginMessage.at(0)).arg(loginMessage.at(1)))){
+        if(sql.exec(QString("insert into user(id,name,password,status)values(%1,'待用户设定',%2,'在线')").arg(loginMessage.at(0)).arg(loginMessage.at(1)))){
             QMessageBox msg;
             msg.critical(this,tr("提示"),tr("系统自动帮您注册"));
             enterChat();
@@ -136,7 +136,6 @@ Start::Start(QWidget *parent) : QWidget(parent)
     setUI();
     initDB();
     setConnect();
-
 }
 void Start::initDB()
 {
@@ -146,6 +145,6 @@ void Start::initDB()
         qDebug()<<"数据库打开出错"<<sysDB.lastError();
     }
     QSqlQuery query1(sysDB);
-    query1.exec("create table user(id text primary key,password text,isOnline integer,ip text default 'null',port text default 'null');");
-    query1.exec("insert into user(id,password,isOnline) values ('root','1111',0);");
+    query1.exec("create table user(id text primary key,name text,password text,status text,ip text default 'null',port text default 'null');");
+    query1.exec("insert into user(id,name,password,status) values ('root','待用户设定','1111','离线');");
 }
