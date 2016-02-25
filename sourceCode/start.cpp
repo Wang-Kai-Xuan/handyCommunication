@@ -1,5 +1,5 @@
 #include "start.h"
-#include "chat.h"
+#include "menu.h"
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QDebug>
@@ -38,7 +38,7 @@ void Start::enterChat()
 {
     sysDB.close();
     QString id = loginMessage.at(0);
-    Chat * chat = new Chat(id);
+    Menu * chat = new Menu(id);
     chat->show();
     this->close();
 }
@@ -100,12 +100,12 @@ void Start::check()
             allowLogin(sql);
         }
     }else{
-        if(sql.exec(QString("insert into user(id,name,password,status)values(%1,'待用户设定',%2,'在线')").arg(loginMessage.at(0)).arg(loginMessage.at(1)))){
+        if(sql.exec(QString("insert into user(id,name,password,status)values('%1','待用户设定','%2','在线')").arg(loginMessage.at(0)).arg(loginMessage.at(1)))){
             QMessageBox msg;
             msg.information(this,tr("提示"),tr("系统自动帮您注册"));
             enterChat();
         }else{
-            qDebug()<<sql.lastError();
+            qDebug()<<"----------"<<sql.lastError();
             QMessageBox msg;
             msg.critical(this,tr("提示"),tr("该用户编号已被占用，如果不是该用户，可注册其他编号"));
         }

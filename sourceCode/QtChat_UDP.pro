@@ -8,24 +8,30 @@ QT       += core gui sql network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = QtChatServer_UDP
+TARGET = QtChat_UDP
 TEMPLATE = app
 
 
 SOURCES += main.cpp \
-    chat.cpp \
     start.cpp \
     ilabel.cpp \
     ioframe.cpp \
-    about.cpp
+    about.cpp \
+    menu.cpp \
+    secretletter.cpp \
+    chatbase.cpp \
+    broadcast.cpp
 
 HEADERS  += \
-    chat.h \
     start.h \
     ilabel.h \
     ioframe.h \
     common.h \
-    about.h
+    about.h \
+    menu.h \
+    secretletter.h \
+    chatbase.h \
+    broadcast.h
 
 CONFIG += mobility
 MOBILITY = 

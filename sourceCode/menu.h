@@ -1,5 +1,7 @@
 #ifndef SERVER_H
 #define SERVER_H
+#include "secretletter.h"
+#include "broadcast.h"
 #include "about.h"
 #include "common.h"
 #include <ioframe.h>
@@ -25,67 +27,45 @@
 #include <QNetworkInterface>
 #include <QHBoxLayout>
 #include <QStandardItemModel>
-class Chat : public QWidget
+class Menu : public QWidget
 {
     Q_OBJECT
 
 public:
-    Chat(QString &Id, QWidget *parent = 0);
-    ~Chat();
+    Menu(QString &Id, QWidget *parent = 0);
+    ~Menu();
 public:
-    QGridLayout * glay_left;
-    QGridLayout * glay_right;
+    QGridLayout * glay_menu;
     QTreeView * tree_view;
-    QTextBrowser * show_message;
-    QTextEdit * input_message;
-    QPushButton * hideOrShow_btn;
-    QPushButton * send_btn;
     QPushButton * close_btn;
-    QLabel * message_show_lab;
-    QLabel * message_input_lab;
-    QHBoxLayout * hlay;
-    ILabel * self_id_lab;
+    QHBoxLayout * hlay_top;
     ILabel * about_lab;
+    ILabel * broadcast_lab;
+    ILabel * self_id_lab;
     void newUI();
     void setUI();
     void setConnect();
     void loadUser();
     void newSth();
     void init();
-    void broadCast(void);
+    void joinBroadCast(void);
     QString getLocalIP();
     QString getUserName();
-
-    void handleMessage();
-
-    void handleSystemMessage();
-
-    void handleGroupChat();
-
-    void clearSendBuf();
-
-    void clearRecvBuf();
-
     void setSelfUI(Ioframe* self_info);
-
-
     void setSelfConnect(Ioframe* self_info);
+
+    void enterSecretChat(QString &objId);
 
 private:
     QSqlDatabase sysDB;
     QStandardItemModel *treeModel;
     QUdpSocket * udpSocket;
-    QByteArray recvData;
     QByteArray sendData;
-    QString userId;
-    #define PORT 12060
-    bool isNeedDebug;
-    QList<QStandardItem *> modelList;
-
     COMMAND command_send;
     QString content_send;
-    COMMAND command_recv;
-    QString content_recv;
+    QString userId;
+    bool isNeedDebug;
+    QList<QStandardItem *> modelList;
     QStringList strList;
     Ioframe * self_info;
     void closeEvent(QCloseEvent *event);
@@ -93,14 +73,13 @@ private:
 signals:
 
 public slots:
-    void onCloseBtn(void);
-    void onSendMessage(void);
     void onSelectUser(const QModelIndex &index);
-    void onReadMessage(void);
     void onExit(void);
     void onSelf(void);
     void onAbout(void);
     void setSelfName();
+    void onBroadCast(void);
+    void onReadMessage(void);
 };
 
 #endif // SERVER_H

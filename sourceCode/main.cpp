@@ -1,4 +1,7 @@
 #include "start.h"
+#include "menu.h"
+#include "chatbase.h"
+#include "broadcast.h"
 #include <QApplication>
 #include <QStyleFactory>
 #include <QStyle>
