@@ -46,12 +46,19 @@ void Menu::enterSecretChat(QString &objId)
     secretLetter->show();
 }
 
+void Menu::enterGroupChat(QString &obj)
+{
+    GroupChat * groupchat = new GroupChat(obj);
+    groupchat->show();
+}
+
 void Menu::onSelectUser(const QModelIndex & index)
 {
-    QString obj = index.data().toString();
+    QString obj;
     QVariant type = index.data(CUSTOM_ROLE);
     switch (type.toInt()){
     case ID:
+        obj = index.data().toString();
         enterSecretChat(obj);
         break;
     case NAME:
@@ -59,6 +66,10 @@ void Menu::onSelectUser(const QModelIndex & index)
         break;
     case STATUS:
         qDebug()<<"---STATUS---";
+        break;
+    case GROUP:
+        obj = index.data().toString();
+        enterGroupChat(obj);
         break;
     default:
         break;
@@ -82,7 +93,7 @@ void Menu::setSelfName()
         msg.show();
     }else{
         self_info->close();
-        loadUser();
+        loadGroup();
     }
 }
 
@@ -106,8 +117,6 @@ void Menu::onReadMessage()
     QString content_recv = recvData.mid(1).data();
     if(command_recv == JOIN){
         QStringList list = content_recv.split(SEPARATE);
-//        qDebug()<<"list0="<<list.at(0);
-//        qDebug()<<"list1="<<list.at(1);
         QSqlQuery sql(sysDB);
         if(!sql.exec(QString("update user set ip = '%1' where id = '%2';").arg(list.at(1)).arg(list.at(0)))){
             qDebug()<<"error in recv="<<sql.lastError();
@@ -163,7 +172,6 @@ void Menu::setConnect()
     connect(tree_view,SIGNAL(entered(QModelIndex)),this,SLOT(onSelectUser(QModelIndex)));
     connect(tree_view,SIGNAL(pressed(QModelIndex)),this,SLOT(onSelectUser(QModelIndex)));
     connect(tree_view,SIGNAL(activated(QModelIndex)),this,SLOT(onSelectUser(QModelIndex)));
-//    connect(close_btn,SIGNAL(clicked(bool)),this,SLOT(onExit()));
     connect(close_btn,&QPushButton::clicked,this,&Menu::onExit);
     connect(self_id_lab,SIGNAL(click()),this,SLOT(onSelf()));
     connect(about_lab,SIGNAL(click()),this,SLOT(onAbout()));
@@ -171,38 +179,52 @@ void Menu::setConnect()
     connect(udpSocket,SIGNAL(readyRead()),this,SLOT(onReadMessage()));
 }
 
-void Menu::loadUser()
+void Menu::loadGroup()
 {
     QSqlQuery sql(sysDB);
-    modelList.clear();
+    group_list.clear();
     treeModel->clear();
-    QStandardItem * item_id;
-    QStandardItem * item_name;
-    QStandardItem * item_status;
-
+    QStandardItem * group;
     treeModel->setHorizontalHeaderLabels(QStringList()<<QStringList("编号")<<QStringList("姓名")<<QStringList("状态"));
-    if(sql.exec("select id,name,status from user;")){
+    if(sql.exec("select distinct owner from user;")){
         while(sql.next()){
-            item_id = new QStandardItem(tr("%1").arg(sql.value(0).toString()));
-            item_name = new QStandardItem(tr("%1").arg(sql.value(1).toString()));
-            item_status = new QStandardItem(tr("%1").arg(sql.value(2).toString()));
-
-            item_id->setData(ID,CUSTOM_ROLE);
-            item_name->setData(NAME,CUSTOM_ROLE);
-            item_status->setData(STATUS,CUSTOM_ROLE);
-
-            modelList.append(item_id);
-            modelList.append(item_name);
-            modelList.append(item_status);
-
-            treeModel->appendRow(modelList);
-            modelList.clear();
+            group = new QStandardItem(tr("%1").arg(sql.value(0).toString()));
+            group->setData(GROUP,CUSTOM_ROLE);
+            treeModel->appendRow(group);
+            group_list.clear();
         }
-        tree_view->setModel(treeModel);
     }else{
         qDebug()<<sql.lastError();
     }
+
+    QStandardItem * item;
+    QStandardItem * item_id;
+    QStandardItem * item_name;
+    QStandardItem * item_status;
+    QList<QStandardItem *> member_list;
+    for(int count = 0; count <= treeModel->columnCount();count++){
+        item = treeModel->item(count);
+        if(sql.exec(QString("select id,name,status from user where owner = '%1';").arg(treeModel->index(count,0).data().toString()))){
+            while(sql.next()){
+                item_id = new QStandardItem(QString("%1").arg(sql.value(0).toString()));
+                item_name = new QStandardItem(QString("%1").arg(sql.value(1).toString()));
+                item_status = new QStandardItem(QString("%1").arg(sql.value(2).toString()));
+
+                item_id->setData(ID,CUSTOM_ROLE);
+                item_name->setData(NAME,CUSTOM_ROLE);
+                item_status->setData(STATUS,CUSTOM_ROLE);
+
+                member_list.append(item_id);
+                member_list.append(item_name);
+                member_list.append(item_status);
+                item->appendRow(member_list);
+                member_list.clear();
+            }
+        }
+    }
+    tree_view->setModel(treeModel);
 }
+
 
 void Menu::newSth()
 {
@@ -246,7 +268,7 @@ Menu::Menu(QString &Id, QWidget *parent)
     setUI();
     init();
     setConnect();
-    loadUser();
+    loadGroup();
     joinBroadCast();
 }
 

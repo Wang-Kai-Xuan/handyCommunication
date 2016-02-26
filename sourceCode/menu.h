@@ -1,5 +1,6 @@
 #ifndef SERVER_H
 #define SERVER_H
+#include "groupchat.h"
 #include "secretletter.h"
 #include "broadcast.h"
 #include "about.h"
@@ -45,7 +46,7 @@ public:
     void newUI();
     void setUI();
     void setConnect();
-    void loadUser();
+    void loadGroup();
     void newSth();
     void init();
     void joinBroadCast(void);
@@ -53,8 +54,8 @@ public:
     QString getUserName();
     void setSelfUI(Ioframe* self_info);
     void setSelfConnect(Ioframe* self_info);
-
     void enterSecretChat(QString &objId);
+    void enterGroupChat(QString &obj);
 
 private:
     QSqlDatabase sysDB;
@@ -65,7 +66,8 @@ private:
     QString content_send;
     QString userId;
     bool isNeedDebug;
-    QList<QStandardItem *> modelList;
+    QList<QStandardItem *> group_list;
+    QList<QStandardItem *> member_list;
     QStringList strList;
     Ioframe * self_info;
     void closeEvent(QCloseEvent *event);

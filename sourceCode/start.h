@@ -1,6 +1,6 @@
 #ifndef FIRSTUSE_H
 #define FIRSTUSE_H
-
+#include <QRegExp>
 #include <QWidget>
 #include <QLineEdit>
 #include <QGridLayout>

@@ -101,7 +101,7 @@ void Start::check()
             allowLogin(sql);
         }
     }else{
-        if(sql.exec(QString("insert into user(id,name,password,status)values('%1','待用户设定','%2','在线')").arg(loginMessage.at(0)).arg(loginMessage.at(1)))){
+        if(sql.exec(QString("insert into user(id,password,status)values('%1','%2','在线')").arg(loginMessage.at(0)).arg(loginMessage.at(1)))){
             QMessageBox msg;
             msg.information(this,tr("提示"),tr("系统自动帮您注册"));
             enterChat();
@@ -124,6 +124,14 @@ void Start::onCheck()
     }else{
         check();
     }
+
+//    QRegExp in("^\\d\\d\\d\\d$");
+//    if(in.indexIn(loginMessage.at(0)) != 0){
+//        qDebug()<<"输入的不是4位数字";
+//    }else{
+//        qDebug()<<"输入的是4位数字";
+//    }
+
     lin_id->clear();
     lin_passwd->clear();
 }
@@ -149,6 +157,11 @@ void Start::initDB()
         qDebug()<<"数据库打开出错"<<sysDB.lastError();
     }
     QSqlQuery query1(sysDB);
-    query1.exec("create table user(id text primary key,name text,password text,status text,ip text default 'null',port text default 'null');");
-    query1.exec("insert into user(id,name,password,status) values ('root','待用户设定','1111','离线');");
+    query1.exec("create table user(id text primary key,name text default '未设置',password text,owner text default '未分组',status text,ip text default 'null',port text default 'null');");
+    query1.exec("insert into user(id,name,password,owner,status) values ('0','陈刚容','0','家人','离线');");
+    query1.exec("insert into user(id,name,password,owner,status) values ('1','王凯军','1','家人','离线');");
+    query1.exec("insert into user(id,name,password,owner,status) values ('2','李志刚','2','大学同学','离线');");
+    query1.exec("insert into user(id,name,password,owner,status) values ('3','崔文伟','3','大学同学','离线');");
+    query1.exec("insert into user(id,name,password,owner,status) values ('4','晏飘','4','初中同学','离线');");
+    query1.exec("insert into user(id,name,password,owner,status) values ('5','王东','5','初中同学','离线');");
 }

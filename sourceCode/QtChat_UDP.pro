@@ -20,7 +20,8 @@ SOURCES += main.cpp \
     menu.cpp \
     secretletter.cpp \
     chatbase.cpp \
-    broadcast.cpp
+    broadcast.cpp \
+    groupchat.cpp
 
 HEADERS  += \
     start.h \
@@ -31,7 +32,8 @@ HEADERS  += \
     menu.h \
     secretletter.h \
     chatbase.h \
-    broadcast.h
+    broadcast.h \
+    groupchat.h
 
 CONFIG += mobility
 MOBILITY = 

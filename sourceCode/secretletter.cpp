@@ -17,6 +17,7 @@ SecretLetter::SecretLetter(QString &value,QString &value1)
     connect(udpSocket,SIGNAL(readyRead()),this,SLOT(onReadMessage()));
     connect(send_btn,SIGNAL(clicked(bool)),this,SLOT(onSendMessage()));
     this->setWindowTitle(tr("与%1通讯 - 简讯").arg(objectId));
+    this->setWindowIcon(QIcon(":/new/windowIcon/icon/WindowIcon.png"));
 
     initDB();
     QSqlQuery sql(sysDB);
