@@ -34,8 +34,6 @@ void BroadCast::onReadMessage()
     }
     command_recv = (COMMAND)recvData.at(0);
     content_recv = recvData.mid(1).data();
-    qDebug()<<"command_recv="<<command_recv;
-    qDebug()<<"content_recv="<<content_recv;
     handleMessage();
 }
 
@@ -54,13 +52,10 @@ void BroadCast::onSendMessage()
         content_send.append(input_message->document()->toPlainText());
         sendData.append(command_send);
         sendData.append(content_send);
-        qint64 dataSize =  udpSocket->writeDatagram(sendData.data(),sendData.size(),QHostAddress::Broadcast,PORT);
+        qint64 dataSize =  udpSocket->writeDatagram(sendData.data(),sendData.size(),QHostAddress::Broadcast,iport);
         if(dataSize == -1){
-            qDebug()<<"onSendMessage="<<udpSocket->error();
+            qDebug()<<udpSocket->error();
         }
-        qDebug()<<"command_send="<<command_send;
-        qDebug()<<"content_send="<<content_send;
-
     }
     input_message->clear();
 }

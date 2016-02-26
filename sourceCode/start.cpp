@@ -4,6 +4,7 @@
 #include <QSqlError>
 #include <QDebug>
 #include <QMessageBox>
+
 void Start::setUI()
 {
     show_lab = new QLabel(tr("首次登录将会自动注册"));

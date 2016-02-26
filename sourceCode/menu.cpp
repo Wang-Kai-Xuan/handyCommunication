@@ -163,7 +163,8 @@ void Menu::setConnect()
     connect(tree_view,SIGNAL(entered(QModelIndex)),this,SLOT(onSelectUser(QModelIndex)));
     connect(tree_view,SIGNAL(pressed(QModelIndex)),this,SLOT(onSelectUser(QModelIndex)));
     connect(tree_view,SIGNAL(activated(QModelIndex)),this,SLOT(onSelectUser(QModelIndex)));
-    connect(close_btn,SIGNAL(clicked(bool)),this,SLOT(onExit()));
+//    connect(close_btn,SIGNAL(clicked(bool)),this,SLOT(onExit()));
+    connect(close_btn,&QPushButton::clicked,this,&Menu::onExit);
     connect(self_id_lab,SIGNAL(click()),this,SLOT(onSelf()));
     connect(about_lab,SIGNAL(click()),this,SLOT(onAbout()));
     connect(broadcast_lab,SIGNAL(click()),this,SLOT(onBroadCast()));
@@ -219,7 +220,7 @@ void Menu::init()
         qDebug()<<"数据库打开出错"<<sysDB.lastError();
     }
     tree_view->setContextMenuPolicy(Qt::CustomContextMenu);
-    if(!udpSocket->bind(PORT,QUdpSocket::ShareAddress|QUdpSocket::ReuseAddressHint)){
+    if(!udpSocket->bind(iport,QUdpSocket::ShareAddress|QUdpSocket::ReuseAddressHint)){
         qDebug()<<"绑定端口失败";
     }
 }
@@ -232,7 +233,7 @@ void Menu::joinBroadCast()
     content_send.append(getLocalIP());
     sendData.append(command_send);
     sendData.append(content_send);
-    udpSocket->writeDatagram(sendData.data(),sendData.size(),QHostAddress::Broadcast,PORT);
+    udpSocket->writeDatagram(sendData.data(),sendData.size(),QHostAddress::Broadcast,iport);
     qDebug()<<"sendData="<<sendData;
 }
 

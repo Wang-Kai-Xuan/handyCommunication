@@ -32,7 +32,7 @@ void ChatBase::setConnect()
 
 void ChatBase::init()
 {
-    if(!udpSocket->bind(PORT,QUdpSocket::ShareAddress|QUdpSocket::ReuseAddressHint)){
+    if(!udpSocket->bind(iport,QUdpSocket::ShareAddress|QUdpSocket::ReuseAddressHint)){
         qDebug()<<"绑定端口失败";
     }
 }

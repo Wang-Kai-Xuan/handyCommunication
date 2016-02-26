@@ -28,7 +28,6 @@ SecretLetter::SecretLetter(QString &value,QString &value1)
             object_address.setAddress(sql.value(0).toString());
         }
     }
-
 }
 
 void SecretLetter::clearRecvBuf()
@@ -64,6 +63,7 @@ void SecretLetter::handleSecret()
 
 void SecretLetter::onReadMessage()
 {
+    qDebug()<<"on read";
     clearRecvBuf();
     while(udpSocket->hasPendingDatagrams()){
         recvData.resize(udpSocket->pendingDatagramSize());
@@ -74,8 +74,8 @@ void SecretLetter::onReadMessage()
     }
     command_recv = (COMMAND)recvData.at(0);
     content_recv = recvData.mid(1).data();
-//    qDebug()<<"command_recv="<<command_recv;
-//    qDebug()<<"content_recv="<<content_recv;
+    qDebug()<<"command_recv="<<command_recv;
+    qDebug()<<"content_recv="<<content_recv;
     handleMessage();
 }
 
@@ -94,12 +94,13 @@ void SecretLetter::onSendMessage()
         content_send.append(input_message->document()->toPlainText());
         sendData.append(command_send);
         sendData.append(content_send);
-        qint64 dataSize =  udpSocket->writeDatagram(sendData.data(),sendData.size(),object_address,PORT);
+        qint64 dataSize =  udpSocket->writeDatagram(sendData.data(),sendData.size(),object_address,iport);
         if(dataSize == -1){
             qDebug()<<"onSendMessage="<<udpSocket->error();
         }
-//        qDebug()<<"command_send="<<command_send;
-//        qDebug()<<"content_send="<<content_send;
+        qDebug()<<"send_address="<<object_address.toString();
+        qDebug()<<"command_send="<<command_send;
+        qDebug()<<"content_send="<<content_send;
     }
     input_message->clear();
 }
