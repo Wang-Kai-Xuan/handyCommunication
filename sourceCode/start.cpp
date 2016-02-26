@@ -7,8 +7,8 @@
 
 void Start::setUI()
 {
-    show_lab = new QLabel(tr("首次登录将会自动注册"));
-    show_id = new QLabel(tr("用户名(&U):"));
+    show_lab = new QLabel(tr("首次登录将会自动注册\n用户编号为4位数字\n用户密码不少于4位，包括大小写字母、数字、下划线"));
+    show_id = new QLabel(tr("用户编号(&U):"));
     show_passwd = new QLabel(tr("用户密码(&P):"));
     lin_id = new QLineEdit;
     lin_passwd = new QLineEdit;
@@ -33,6 +33,7 @@ void Start::setUI()
     this->resize(300,120);
     this->setWindowFlags(Qt::WindowTitleHint);
     this->setWindowIcon(QIcon(":/new/windowIcon/icon/WindowIcon.png"));
+
 }
 
 void Start::enterChat()
@@ -122,16 +123,15 @@ void Start::onCheck()
         QMessageBox msg;
         msg.critical(this,tr("提示"),tr("用户或者密码不能为空"),"确定");
     }else{
-        check();
+        QRegExp reg_id("^\\d\\d\\d\\d$");
+        QRegExp reg_pwd("^\\w\\w\\w\\w");
+        if((reg_id.indexIn(loginMessage.at(0)) == 0) && (reg_pwd.indexIn(loginMessage.at(1)) == 0)){
+            check();
+        }else{
+            QMessageBox msg;
+            msg.warning(this,tr("提示"),tr("格式错误"),"确定");
+        }
     }
-
-//    QRegExp in("^\\d\\d\\d\\d$");
-//    if(in.indexIn(loginMessage.at(0)) != 0){
-//        qDebug()<<"输入的不是4位数字";
-//    }else{
-//        qDebug()<<"输入的是4位数字";
-//    }
-
     lin_id->clear();
     lin_passwd->clear();
 }

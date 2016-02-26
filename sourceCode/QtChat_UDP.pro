@@ -8,7 +8,7 @@ QT       += core gui sql network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = QtChat_UDP
+TARGET = SipleCommunucation
 TEMPLATE = app
 
 
@@ -41,3 +41,4 @@ MOBILITY =
 RESOURCES += \
     resource.qrc
 
+RC_FILE = app.rc
