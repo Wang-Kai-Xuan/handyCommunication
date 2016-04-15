@@ -28,10 +28,25 @@ public:
 public:
     explicit Start(QWidget *parent = 0);
     void setUI();
+    /**
+     * @brief setConnect 设置信号和槽
+     */
     void setConnect();
+    /**
+     * @brief check
+     * 登录验证
+     */
     void check();
     void allowLogin(QSqlQuery sql);
+    /**
+     * @brief enterChat
+     * 验证成功，进入主界面
+     */
     void enterChat();
+    /**
+     * @brief initDB
+     * 初始化数据库
+     */
     void initDB();
 signals:
 

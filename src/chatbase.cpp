@@ -22,7 +22,7 @@ void ChatBase::setUI()
     glay_main->addWidget(close_btn,4,1,1,1);
 
     this->setLayout(glay_main);
-    this->setWindowIcon(QIcon(":/new/windowIcon/icon/WindowIcon.png"));
+//    this->setWindowIcon(QIcon(":/new/windowIcon/icon/WindowIcon.png"));
 }
 
 void ChatBase::setConnect()

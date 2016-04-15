@@ -259,17 +259,17 @@ void Menu::joinBroadCast()
     qDebug()<<"sendData="<<sendData;
 }
 
-Menu::Menu(QString &Id, QWidget *parent)
-    : QWidget(parent)
+Menu::Menu(QString &Id, QMainWindow *parent)
+    : QMainWindow(parent)
 {
-    userId = Id;
-    newUI();
-    newSth();
-    setUI();
-    init();
-    setConnect();
-    loadGroup();
-    joinBroadCast();
+//    userId = Id;
+//    newUI();
+//    newSth();
+//    setUI();
+//    init();
+//    setConnect();
+//    loadGroup();
+//    joinBroadCast();
 }
 
 Menu::~Menu()

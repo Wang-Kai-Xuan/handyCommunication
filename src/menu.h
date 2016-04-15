@@ -28,12 +28,13 @@
 #include <QNetworkInterface>
 #include <QHBoxLayout>
 #include <QStandardItemModel>
-class Menu : public QWidget
+#include <QMainWindow>
+class Menu : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    Menu(QString &Id, QWidget *parent = 0);
+    Menu(QString &Id, QMainWindow *parent = 0);
     ~Menu();
 public:
     QGridLayout * glay_menu;

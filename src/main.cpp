@@ -9,8 +9,11 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     QApplication::setStyle(QStyleFactory::create("Fusion"));
-    Start * w = new Start();
-    w->show();
+//    Start * w = new Start();
+//    w->show();
+    QString id = "999";
+    Menu * menu = new Menu(id);
+    menu->show();
     return a.exec();
 }
 

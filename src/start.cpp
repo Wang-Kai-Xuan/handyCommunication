@@ -152,16 +152,20 @@ Start::Start(QWidget *parent) : QWidget(parent)
 void Start::initDB()
 {
     sysDB=QSqlDatabase::addDatabase("QSQLITE","connectSystemDB");
-    sysDB.setDatabaseName("chat.db");
+    sysDB.setDatabaseName("handyCommunication.db");
     if(!sysDB.open()){
         qDebug()<<"数据库打开出错"<<sysDB.lastError();
     }
     QSqlQuery query1(sysDB);
-    query1.exec("create table user(id text primary key,name text default '未设置',password text,owner text default '未分组',status text,ip text default 'null',port text default 'null');");
-    query1.exec("insert into user(id,name,password,owner,status) values ('0','陈刚容','0','家人','离线');");
-    query1.exec("insert into user(id,name,password,owner,status) values ('1','王凯军','1','家人','离线');");
-    query1.exec("insert into user(id,name,password,owner,status) values ('2','李志刚','2','大学同学','离线');");
-    query1.exec("insert into user(id,name,password,owner,status) values ('3','崔文伟','3','大学同学','离线');");
-    query1.exec("insert into user(id,name,password,owner,status) values ('4','晏飘','4','初中同学','离线');");
-    query1.exec("insert into user(id,name,password,owner,status) values ('5','王东','5','初中同学','离线');");
+    QString str = "create table user(id text primary key,password text\
+,phone text default '未设置',email text default '未设置',qq text default '未设置'\
+,sex text default '未设置',introduce text default '未设置',isOnline text default '未设置'\
+,ip text default 'null',port text default 'null');";
+    if(!query1.exec(str)){
+        qDebug()<<query1.lastError();
+    }
+
+    if(!query1.exec("insert into user(id,password,sex,isOnline) values ('0000','0000','男','离线');")){
+        qDebug()<<query1.lastError();
+    }
 }

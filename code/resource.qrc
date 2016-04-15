@@ -1,5 +1,0 @@
-<RCC>
-    <qresource prefix="/new/windowIcon">
-        <file>icon/WindowIcon.png</file>
-    </qresource>
-</RCC>

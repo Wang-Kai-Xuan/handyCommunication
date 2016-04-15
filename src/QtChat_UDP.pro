@@ -42,3 +42,7 @@ RESOURCES += \
     resource.qrc
 
 RC_FILE = app.rc
+
+DISTFILES += \
+    readme.txt \
+    question.txt
