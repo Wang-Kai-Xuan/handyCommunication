@@ -15,25 +15,21 @@ TEMPLATE = app
 SOURCES += main.cpp \
     start.cpp \
     ilabel.cpp \
-    ioframe.cpp \
     about.cpp \
     menu.cpp \
-    secretletter.cpp \
-    chatbase.cpp \
     broadcast.cpp \
-    groupchat.cpp
+    user_tree.cpp \
+    udp.cpp
 
 HEADERS  += \
     start.h \
     ilabel.h \
-    ioframe.h \
-    common.h \
     about.h \
     menu.h \
-    secretletter.h \
-    chatbase.h \
     broadcast.h \
-    groupchat.h
+    user_tree.h \
+    header.h \
+    udp.h
 
 CONFIG += mobility
 MOBILITY = 
@@ -45,4 +41,5 @@ RC_FILE = app.rc
 
 DISTFILES += \
     readme.txt \
-    question.txt
+    question.txt \
+    notes.txt

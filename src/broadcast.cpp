@@ -1,78 +1,56 @@
 #include "broadcast.h"
 
-BroadCast::BroadCast(QString &value)
+void BroadCast::newUI()
 {
-    userId = value;
-    connect(udpSocket,SIGNAL(readyRead()),this,SLOT(onReadMessage()));
+    glay_main = new QGridLayout;
+    show_message = new QTextBrowser;
+    input_message = new QTextEdit;
+    send_btn = new QPushButton(tr("发送(&D)"));
+    message_show_lab = new QLabel(tr("消息显示:"));
+    message_input_lab = new QLabel(tr("消息输入:"));
+}
+
+void BroadCast::setUI()
+{
+    glay_main->addWidget(message_show_lab,0,0,1,2);
+    glay_main->addWidget(show_message,1,0,1,2);
+    glay_main->addWidget(message_input_lab,2,0,1,2);
+    glay_main->addWidget(input_message,3,0,1,2);
+    glay_main->addWidget(send_btn,4,0,1,1);
+
+    this->setLayout(glay_main);
+}
+
+void BroadCast::setConnect()
+{
     connect(send_btn,SIGNAL(clicked(bool)),this,SLOT(onSendMessage()));
-    this->setWindowTitle(tr("广播中 - 简讯"));
-}
-
-void BroadCast::clearRecvBuf()
-{
-    recvData.clear();
-    command_recv = COMMAND_NULL;
-    content_recv.clear();
-
-}
-void BroadCast::clearSendBuf()
-{
-    sendData.clear();
-    command_send = COMMAND_NULL;
-    content_send.clear();
+    connect(udpSocket,SIGNAL(readFinished()),this,SLOT(onReadMessage()));
 }
 
 void BroadCast::onReadMessage()
 {
-    clearRecvBuf();
-    while(udpSocket->hasPendingDatagrams()){
-        recvData.resize(udpSocket->pendingDatagramSize());
-        qint64 dataSize = udpSocket->readDatagram(recvData.data(),recvData.size());
-        if(dataSize == -1){
-            qDebug()<<udpSocket->errorString();
-        }
+    QStringList list = udpSocket->getNetWorkContent().split(SEPARATE);
+    if(list.at(0) == QString(BROADCAST)){
+        show_message->append(QString("<%1>%2").arg(list.at(1)).arg(list.at(2)));
     }
-    command_recv = (COMMAND)recvData.at(0);
-    content_recv = recvData.mid(1).data();
-    handleMessage();
 }
-
 void BroadCast::onSendMessage()
 {
-    if(input_message->document()->isEmpty()){
-        QMessageBox msg;
-        msg.warning(this,"提示","不能发送空消息");
-        msg.show();
-    }else{
-        sendData.clear();
-        clearSendBuf();
-        command_send = BROADCAST;
-        content_send.append(userId);
-        content_send.append(SEPARATE);
-        content_send.append(input_message->document()->toPlainText());
-        sendData.append(command_send);
-        sendData.append(content_send);
-        qint64 dataSize =  udpSocket->writeDatagram(sendData.data(),sendData.size(),QHostAddress::Broadcast,iport);
-        if(dataSize == -1){
-            qDebug()<<udpSocket->error();
-        }
-    }
+    send_buf.clear();
+    send_buf.append(BROADCAST);
+    send_buf.append(SEPARATE);
+    send_buf.append(user_id);
+    send_buf.append(SEPARATE);
+    send_buf.append(input_message->document()->toPlainText());
+    udpSocket->sendBroadCast(send_buf);
     input_message->clear();
 }
 
-void BroadCast::handleBroadcast()
+BroadCast::BroadCast(Udp *socket, QString &id, QWidget *parent)
+    : QWidget(parent),user_id(id)
 {
-    strList = content_recv.split(SEPARATE);
-    show_message->append(QString("<编号:%1>%2").arg(strList.at(0)).arg(strList.at(1)));
-}
-
-void BroadCast::handleMessage()
-{
-    switch(command_recv){
-    case BROADCAST:
-        handleBroadcast();
-        break;
-    default:
-        break;
-    }
+    udpSocket = socket;
+    newUI();
+    setUI();
+    setConnect();
 }

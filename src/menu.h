@@ -1,88 +1,75 @@
 #ifndef SERVER_H
 #define SERVER_H
-#include "groupchat.h"
-#include "secretletter.h"
+#include "header.h"
+#include "udp.h"
 #include "broadcast.h"
-#include "about.h"
-#include "common.h"
-#include <ioframe.h>
-#include <ilabel.h>
-#include <QMessageBox>
-#include <QAbstractSocket>
-#include <QKeyEvent>
-#include <QEvent>
-#include <QWidget>
-#include <QDialog>
-#include <QProcess>
-#include <QLineEdit>
-#include <QGridLayout>
-#include <QByteArray>
-#include <QLabel>
-#include <QSqlDatabase>
-#include <QPushButton>
-#include <QTreeView>
-#include <QTextBrowser>
-#include <QTextEdit>
-#include <QUdpSocket>
-#include <QHostAddress>
-#include <QNetworkInterface>
-#include <QHBoxLayout>
-#include <QStandardItemModel>
-#include <QMainWindow>
+#include "user_tree.h"
 class Menu : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    Menu(QString &Id, QMainWindow *parent = 0);
+    Menu(QString &Id,QSqlDatabase &db, QMainWindow *parent = 0);
     ~Menu();
 public:
-    QGridLayout * glay_menu;
-    QTreeView * tree_view;
+    QMenuBar * menu_bar;
+    QMenu *menu_setting;
+    QMenu *menu_root;
+    QMenu *menu_master;
+    /*-------root action-------*/
+    QAction *add_group;
+    QAction *del_group;
+    QAction *alt_group;
+
+    /*-------master action-------*/
+    QAction *add_user;
+    QAction *del_user;
+    QAction *alt_user;
+
+    QTabWidget * tab_widget;
+    BroadCast * widget_broadcast;
+    UserTree * user_tree;
+    /*-------old code-------*/
     QPushButton * close_btn;
     QHBoxLayout * hlay_top;
     ILabel * about_lab;
     ILabel * broadcast_lab;
-    ILabel * self_id_lab;
+
     void newUI();
     void setUI();
     void setConnect();
-    void loadGroup();
-    void newSth();
-    void init();
-    void joinBroadCast(void);
     QString getLocalIP();
     QString getUserName();
-    void setSelfUI(Ioframe* self_info);
-    void setSelfConnect(Ioframe* self_info);
-    void enterSecretChat(QString &objId);
-    void enterGroupChat(QString &obj);
 
+    void setAction();
+
+    void setTab();
+
+    void addGroup(QStringList &list);
+
+    bool isRoot(QString &id);
+    bool isMaster(QString &id);
+    void closeEvent(QCloseEvent *event);
+    QString getGroupID(QString &master_id);
 private:
-    QSqlDatabase sysDB;
-    QStandardItemModel *treeModel;
-    QUdpSocket * udpSocket;
+
+    Udp* udpSocket;
     QByteArray sendData;
     COMMAND command_send;
     QString content_send;
     QString userId;
     bool isNeedDebug;
-    QList<QStandardItem *> group_list;
-    QList<QStandardItem *> member_list;
     QStringList strList;
-    Ioframe * self_info;
-    void closeEvent(QCloseEvent *event);
-    void keyPressEvent(QKeyEvent *event);
+public:
+    QSqlDatabase &sysDB;
+
 signals:
 
 public slots:
-    void onSelectUser(const QModelIndex &index);
-    void onExit(void);
-    void onSelf(void);
-    void onAbout(void);
-    void setSelfName();
-    void onBroadCast(void);
+
     void onReadMessage(void);
+    void onAddGroup();
+    void onAddUser();
 };
 
 #endif // SERVER_H

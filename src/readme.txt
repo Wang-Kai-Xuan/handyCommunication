@@ -26,13 +26,25 @@
     音频播放窗口
 
 3 数据库设计：
-    数据表：注册用户信息（user）、组信息（group）、用户聊天历史（user_history_id）、组聊天历史(group_history_id)
+    数据表：注册用户信息（user）、组信息（_group）、用户聊天历史（user_history_id）、组聊天历史(group_history_id)
 
     table:
         user -> id password phone email qq sex introduce ip port isOnline
-        group -> id master_id introduce
+        _group -> id master_id introduce
         user_history_id -> id type content time
-        group_history_id -> id type content time
+        group_history_id -> id sender content time
 
 4 使用对象
     ...
+
+5 root具有的权限：
+    创建组
+        所需要的信息-组id、组长
+    删除组
+    修改组
+    查看组
+
+6 组长具有的权限：
+    添加成员
+    删除成员
+
