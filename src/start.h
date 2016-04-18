@@ -42,8 +42,7 @@ public:
      * 初始化数据库
      */
     void initDB();
-    void enterMenu();
-
+    void enterMenu(QSqlQuery &sql);
 signals:
 
 public slots:

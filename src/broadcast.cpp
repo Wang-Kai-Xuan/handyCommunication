@@ -32,22 +32,21 @@ void BroadCast::onReadMessage()
     QStringList list = udpSocket->getNetWorkContent().split(SEPARATE);
     if(list.at(0) == QString(BROADCAST)){
         show_message->append(QString("<%1>%2").arg(list.at(1)).arg(list.at(2)));
+        QSqlQuery sql(sysDB);
+        if(!sql.exec(QString("insert into broadcast_history(sender,content) values ('%1','%2');")\
+                     .arg(list.at(1)).arg(list.at(2)))){
+            qDebug()<<sql.lastError();
+        }
     }
 }
 void BroadCast::onSendMessage()
 {
-    send_buf.clear();
-    send_buf.append(BROADCAST);
-    send_buf.append(SEPARATE);
-    send_buf.append(user_id);
-    send_buf.append(SEPARATE);
-    send_buf.append(input_message->document()->toPlainText());
-    udpSocket->sendBroadCast(send_buf);
+    udpSocket->send(QString(BROADCAST)+QString(SEPARATE+user_id+SEPARATE+input_message->document()->toPlainText()));
     input_message->clear();
 }
 
-BroadCast::BroadCast(Udp *socket, QString &id, QWidget *parent)
-    : QWidget(parent),user_id(id)
+BroadCast::BroadCast(QSqlDatabase &db, Udp *socket, QString &id, QWidget *parent)
+    : QWidget(parent),user_id(id),sysDB(db)
 {
     udpSocket = socket;
     newUI();

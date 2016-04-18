@@ -1,6 +1,7 @@
 #ifndef HEADER_H
 #define HEADER_H
 
+#include <QComboBox>
 #include <ilabel.h>
 #include <QMessageBox>
 #include <QAbstractSocket>
@@ -34,17 +35,27 @@
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QModelIndex>
+#include <QHostInfo>
 #include <QInputDialog>
+#include <QMediaPlayer>
+#include <QMultimedia>
+#include <QMediaPlaylist>
+#include <QMediaMetaData>
+#include <QFileDialog>
+#include <QListView>
+#include <QDial>
+#include <QSlider>
+#include <QTimer>
 #include "start.h"
 #include "about.h"
 
-#define SEPARATE 0x01
+#define SEPARATE "````"
 #define CUSTOM_ROLE Qt::UserRole + 1
 
 #define iport 12060
 
 enum COMMAND{
-    COMMAND_NULL,JOIN,GROUP_CHAT,BROADCAST,SECRET_CHAT
+    COMMAND_NULL,BROADCAST_ADDRESS,GROUP_CHAT,BROADCAST,SECRET_CHAT
 };
 
 enum IROLE{

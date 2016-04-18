@@ -10,8 +10,9 @@ void Menu::newUI()
 
     /*QTabWidget*/
     tab_widget = new QTabWidget();
-    widget_broadcast = new BroadCast(udpSocket,userId,this);
+    widget_broadcast = new BroadCast(sysDB,udpSocket,userId,this);
     user_tree = new UserTree(sysDB,udpSocket);
+    audio_player = new AudioPlayer;
 
     /*root action*/
     add_group = new QAction("添加组",menu_root);
@@ -45,6 +46,9 @@ void Menu::setTab()
 {
     tab_widget->addTab(widget_broadcast,"广播");
     tab_widget->addTab(user_tree,"用户树");
+    tab_widget->addTab(audio_player,"播放音频");
+    tab_widget->addTab(new QWidget,"发送文件");
+    tab_widget->addTab(new QWidget,"本人信息及设置");
     tab_widget->setTabPosition(QTabWidget::West);
     tab_widget->setTabShape(QTabWidget::Rounded);
 }
@@ -130,7 +134,6 @@ void Menu::addGroup(QStringList &list)
 
 void Menu::onAddGroup()
 {
-        qDebug()<<"======"<<endl;
     if(!isRoot(userId)){
         QMessageBox::warning(this, tr("提示"),tr("需要Root权限！"),QMessageBox::Ok);
         return ;
@@ -150,6 +153,7 @@ void Menu::onAddGroup()
     }else{
         QMessageBox::warning(this, tr("提示"),tr("输入格式有误，请重新输入！"),QMessageBox::Ok);
     }
+    user_tree->loadGroup();
 }
 void Menu::onAddUser()
 {
@@ -174,17 +178,25 @@ void Menu::onAddUser()
     }else{
         QMessageBox::warning(this, tr("提示"),tr("输入格式有误，请重新输入！"),QMessageBox::Ok);
     }
+
+    user_tree->loadGroup();
 }
 
 void Menu::onReadMessage()
 {
-    qDebug()<<"in Menu="<<udpSocket->getNetWorkContent()<<endl;
+    QStringList list = udpSocket->getNetWorkContent().split(SEPARATE);
+    if(list.at(0) != QString(BROADCAST_ADDRESS)) return ;
+    if(list.size() != 3) return ;
+    QSqlQuery sql(sysDB);
+    if(!sql.exec(QString("update user set ip = '%1' where id = '%2';").arg(list.at(2)).arg(list.at(1))))
+        qDebug()<<sql.lastError();
 }
 
 void Menu::setConnect()
 {
     connect(add_group,SIGNAL(triggered(bool)),this,SLOT(onAddGroup()));
     connect(add_user,SIGNAL(triggered(bool)),this,SLOT(onAddUser()));
+    connect(udpSocket,SIGNAL(readFinished()),this,SLOT(onReadMessage()));
 }
 
 Menu::Menu(QString &Id, QSqlDatabase &db, QMainWindow *parent)
@@ -193,6 +205,7 @@ Menu::Menu(QString &Id, QSqlDatabase &db, QMainWindow *parent)
     newUI();
     setUI();
     setConnect();
+    udpSocket->send(QString(BROADCAST_ADDRESS)+QString(SEPARATE+userId+SEPARATE+udpSocket->getLocalIP()));
 }
 
 Menu::~Menu()

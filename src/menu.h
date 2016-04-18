@@ -4,6 +4,7 @@
 #include "udp.h"
 #include "broadcast.h"
 #include "user_tree.h"
+#include "audioplayer.h"
 class Menu : public QMainWindow
 {
     Q_OBJECT
@@ -29,6 +30,7 @@ public:
     QTabWidget * tab_widget;
     BroadCast * widget_broadcast;
     UserTree * user_tree;
+    AudioPlayer * audio_player;
     /*-------old code-------*/
     QPushButton * close_btn;
     QHBoxLayout * hlay_top;

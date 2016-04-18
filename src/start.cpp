@@ -1,10 +1,10 @@
-#include "start.h"
-#include "menu.h"
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QDebug>
 #include <QMessageBox>
-
+#include "header.h"
+#include "start.h"
+#include "menu.h"
 void Start::setUI()
 {
     show_lab = new QLabel(tr("首次登录将会自动注册\n用户编号为4位数字\n用户密码不少于4位，包括大小写字母、数字、下划线"));
@@ -36,7 +36,7 @@ void Start::setUI()
 
 }
 
-void Start::enterMenu()
+void Start::enterMenu(QSqlQuery & sql)
 {
     QString id = loginMessage.at(0);
     Menu * chat = new Menu(id,sysDB);
@@ -59,7 +59,7 @@ void Start::check()
 
     if(isRegister){
         if(sql.exec(QString("update user set isOnline = '在线' where id = '%1';").arg(loginMessage.at(0)))){
-            enterMenu();
+            enterMenu(sql);
         }else{
             qDebug()<<sql.lastError()<<endl;
         }
@@ -69,7 +69,7 @@ void Start::check()
             if(sql.exec(QString("create table user_history_%1(sender text not null,content text default 'null',time text default current_timestamp);")\
                 .arg(loginMessage.at(0)))){
                 QMessageBox::information(this,tr("提示"),tr("系统自动帮您注册"));
-                enterMenu();
+                enterMenu(sql);
             }
             qDebug()<<sql.lastError()<<endl;
         }
@@ -112,24 +112,25 @@ Start::Start(QSqlDatabase &db, QWidget *parent)
     initDB();
     setConnect();
 }
+
 void Start::initDB()
 {
-//    sysDB=QSqlDatabase::addDatabase("QSQLITE","connectSystemDB");
-//    sysDB.setDatabaseName("handyCommunication.db");
-//    if(!sysDB.open()){
-//        qDebug()<<"数据库打开出错"<<sysDB.lastError();
-//    }
     QSqlQuery query1(sysDB);
 
     QString str = "create table user(id text primary key,password text not null\
 ,phone text default '未设置',email text default '未设置',isRoot text default 'no',qq text default '未设置'\
 ,sex text default '未设置',introduce text default '未设置',isOnline text default '未设置'\
-,ip text default 'null',port text default 'null',registerTime text default current_timestamp);";
+,ip text default 'null',port text default 'null',registerTime text default current_timestamp\
+,localHostName text default 'null');";
     if(!query1.exec(str)){
         qDebug()<<query1.lastError();
     }
 
     str = "create table _group(id text primary key,master_id text not null,introduce text default 'null',buildTime text default current_timestamp);";
+    if(!query1.exec(str)){
+        qDebug()<<query1.lastError();
+    }
+    str = "create table broadcast_history(sender text not null,content text default 'null',time text default current_timestamp);";
     if(!query1.exec(str)){
         qDebug()<<query1.lastError();
     }

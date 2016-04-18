@@ -7,7 +7,7 @@ class BroadCast : public QWidget
 {
     Q_OBJECT
 public:
-    explicit BroadCast(Udp * socket,QString & id,QWidget *parent = 0);
+    explicit BroadCast(QSqlDatabase &db,Udp * socket,QString & id,QWidget *parent = 0);
 public:
     QGridLayout * glay_main;
     QTextBrowser * show_message;
@@ -15,7 +15,6 @@ public:
     QPushButton * send_btn;
     QLabel * message_show_lab;
     QLabel * message_input_lab;
-    QString send_buf;
     QString recv_buf;
     QString & user_id;
     void newUI();
@@ -24,6 +23,7 @@ public:
 
 public:
     Udp * udpSocket;
+    QSqlDatabase &sysDB;
 
 signals:
 

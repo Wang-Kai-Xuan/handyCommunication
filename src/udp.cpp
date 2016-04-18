@@ -14,11 +14,20 @@ void Udp::configNetWork()
     connect(udpSocket,SIGNAL(readyRead()),this,SLOT(recv()));
 }
 
-void Udp::sendBroadCast(QString string)
+void Udp::send(QString string)
 {
     array = string.toUtf8();
     udpSocket->writeDatagram(array,QHostAddress::Broadcast,iport);
 }
+
+void Udp::send(QString content,QString ip)
+{
+    array = content.toUtf8();
+    QHostAddress addr;
+    addr.setAddress(ip);
+    udpSocket->writeDatagram(array,array.size(),addr,iport);
+}
+
 void Udp::recv(void)
 {
     while(udpSocket->hasPendingDatagrams()){
@@ -40,4 +49,20 @@ QString Udp::getNetWorkContent(void)
     static QString str;
     str = recvData.data();
     return str;
+}
+QString Udp::getLocalHostName()
+{
+    static QString localHostName = QHostInfo::localHostName();
+    return localHostName;
+
+}
+QString Udp::getLocalIP()
+{
+    QHostInfo info= QHostInfo::fromName(getLocalHostName());
+    foreach(QHostAddress address,info.addresses())
+    {
+         if(address.protocol() == QAbstractSocket::IPv4Protocol)
+             return address.toString();
+    }
+    return NULL;
 }

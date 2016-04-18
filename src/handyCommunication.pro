@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui sql network
+QT       += core gui sql network multimedia
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -19,7 +19,8 @@ SOURCES += main.cpp \
     menu.cpp \
     broadcast.cpp \
     user_tree.cpp \
-    udp.cpp
+    udp.cpp \
+    audioplayer.cpp
 
 HEADERS  += \
     start.h \
@@ -29,7 +30,8 @@ HEADERS  += \
     broadcast.h \
     user_tree.h \
     header.h \
-    udp.h
+    udp.h \
+    audioplayer.h
 
 CONFIG += mobility
 MOBILITY = 
@@ -43,3 +45,5 @@ DISTFILES += \
     readme.txt \
     question.txt \
     notes.txt
+SUBDIRS += subdirs
+

@@ -11,9 +11,12 @@ public:
     QByteArray array;
     Udp();
     void configNetWork();
-    void sendBroadCast(QString string);
+    void send(QString string);
 
     QString getNetWorkContent();
+    void send(QString content, QString ip);
+    QString getLocalIP();
+    QString getLocalHostName();
 public slots:
     void recv();
     void print();

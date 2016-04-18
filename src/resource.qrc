@@ -1,1 +1,7 @@
-<RCC/>
+<RCC>
+    <qresource prefix="/backgroud">
+        <file>../res/backgroud.jpg</file>
+        <file>../res/backgroud0.jpg</file>
+        <file>../res/backgroud1.jpg</file>
+    </qresource>
+</RCC>

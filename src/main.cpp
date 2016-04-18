@@ -5,7 +5,7 @@
 #include <QApplication>
 #include <QStyleFactory>
 #include <QStyle>
-
+#include "audioplayer.h"
 void openDB(QSqlDatabase &sysDB)
 {
     sysDB=QSqlDatabase::addDatabase("QSQLITE","connectSystemDB");
@@ -21,23 +21,16 @@ int main(int argc, char *argv[])
     QApplication::setStyle(QStyleFactory::create("Fusion"));
     QSqlDatabase sysDB;
     openDB(sysDB);
-    Start * w = new Start(sysDB);
-    w->show();
 
-//    Ioframe * w = new Ioframe();
+//    Start * w = new Start(sysDB);
 //    w->show();
-
 
 //    QString id = "2222";
 //    Menu * menu = new Menu(id,sysDB);
 //    menu->show();
 
-//    Udp up;
-
-
-
-//    ChatBase * chat = new ChatBase();
-//    chat->show();
+    AudioPlayer audio_player;
+    audio_player.show();
     return a.exec();
 }
 

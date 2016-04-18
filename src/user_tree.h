@@ -16,11 +16,16 @@ public:
     QList<QStandardItem *> member_list;
     QGridLayout *glay;
     QGridLayout *child_glay;
+    QGridLayout *child_glay_left;
     QTextEdit * msg_input;
     QTextEdit* msg_output;
     QPushButton * hide_btn;
+    QComboBox * view_type;
     QPushButton * send_btn;
+    QLabel * chat_type;
+    QLabel * chat_id;
     Udp * udpSocket;
+    #define BASEROE 1
     void loadGroup();
     void newUI();
 
@@ -28,7 +33,10 @@ public:
 
     void setConnect();
 
-    void showMessage();
+    void showMessageUI();
+    void groupChat(QString &group_id);
+    void sercetChat(QString &user_id);
+    QString getUserIP(QString &user_id);
 signals:
 
 public slots:
