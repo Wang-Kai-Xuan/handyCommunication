@@ -9,11 +9,13 @@
 #include <QEvent>
 #include <QWidget>
 #include <QDialog>
+#include <QStandardPaths>
 #include <QProcess>
 #include <QLineEdit>
 #include <QGridLayout>
 #include <QByteArray>
 #include <QLabel>
+#include <QPicture>
 #include <QSqlDatabase>
 #include <QPushButton>
 #include <QTreeView>
@@ -47,7 +49,7 @@
 #include <QSlider>
 #include <QTimer>
 #include "start.h"
-#include "about.h"
+#include <QImageReader>
 
 #define SEPARATE "````"
 #define CUSTOM_ROLE Qt::UserRole + 1

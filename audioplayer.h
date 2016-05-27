@@ -7,8 +7,8 @@ class AudioPlayer : public QWidget
 {
     Q_OBJECT
 public:
-    explicit AudioPlayer(QWidget *parent = 0);
-    #define LAYOUT_BASE 0
+    AudioPlayer();
+    ~AudioPlayer();
     QMediaPlayer * player;
     QMediaPlaylist * play_list;
     QGridLayout *glay;

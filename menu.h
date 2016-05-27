@@ -32,13 +32,12 @@ public:
     UserTree * user_tree;
     AudioPlayer * audio_player;
     /*-------old code-------*/
-    QPushButton * close_btn;
     QHBoxLayout * hlay_top;
     ILabel * about_lab;
     ILabel * broadcast_lab;
 
-    void newUI();
-    void setUI();
+    void newComponent();
+    void setComponent();
     void setConnect();
     QString getLocalIP();
     QString getUserName();

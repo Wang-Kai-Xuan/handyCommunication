@@ -4,3 +4,4 @@ this event handler is called with the given event when Qt receives a window clos
 
 2、QLayout: Attempting to add QLayout "" to AudioPlayer "", which already has a layout
     QMainWindow是默认有layout的，所以再次设置layout会失效。
+3、Q_ASSERT有什么用？

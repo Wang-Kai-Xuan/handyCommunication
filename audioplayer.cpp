@@ -11,7 +11,7 @@ void AudioPlayer::newCompoent()
     player = new QMediaPlayer(this);
     play_list = new QMediaPlaylist();
     dial = new QDial;
-    slider = new QSlider;
+    slider = new QSlider(Qt::Horizontal);
     timer= new QTimer(this);
     lab_signer= new QLabel("歌手");
     lab_artist= new QLabel("歌手");
@@ -21,32 +21,36 @@ void AudioPlayer::newCompoent()
 
 void AudioPlayer::setComponent()
 {
+    lab_pic->setFixedHeight(200);
+    lab_pic->setFixedWidth(200);
     hlay->addWidget(open_audio);
     hlay->addWidget(play_pause);
     hlay->addWidget(next_audio);
     hlay->addWidget(pre_audio);
 
-    glay->addWidget(lab_pic,LAYOUT_BASE+0,1,1,1);
-    glay->addWidget(slider,LAYOUT_BASE+1,0,1,1);
-    glay->addWidget(dial,LAYOUT_BASE+2,0,1,1);
-    glay->addWidget(lab_signer,LAYOUT_BASE+3,0,1,1);
-    glay->addWidget(lab_artist,LAYOUT_BASE+4,0,1,1);
-    glay->addLayout(hlay,LAYOUT_BASE+5,1);
-    this->setLayout(glay);
+    glay->addWidget(lab_pic,0,0,1,1);
+    glay->addWidget(lab_signer,2,0,1,1);
+    glay->addWidget(lab_artist,3,0,1,1);
+    glay->addWidget(slider,4,0,1,1);
+    glay->addWidget(dial,4,1,1,1);
+    glay->addLayout(hlay,5,1,1,2);
 
     timer->setInterval(100);
     timer->start();
+
     this->resize(800,600);
+    this->setLayout(glay);
 }
+
 void AudioPlayer::onPlay()
 {
-    if(player->state() == QMediaPlayer::PlayingState)
-        this->player->pause();
+    if(player->state() == QMediaPlayer::PlayingState) this->player->pause();
     else{
         player->setVolume(50);
         player->play();
     }
 }
+
 void AudioPlayer::onUpdateSlider()
 {
     int pos = player->position();
@@ -77,16 +81,25 @@ void AudioPlayer::setConnect()
     connect(player,SIGNAL(metaDataChanged()),this,SLOT(onMetaDataUpdate()));
 }
 
-AudioPlayer::AudioPlayer(QWidget *parent)
+AudioPlayer::AudioPlayer()
 {
     newCompoent();
     setComponent();
     setConnect();
+//    lab_pic->setPixmap(QPixmap("F:/Project/handyCommunication/src/backgroud0.jpg"));
+}
+
+AudioPlayer::~AudioPlayer()
+{
+
 }
 
 void AudioPlayer::onOpenAudio(void){
-    QStringList list;
-    list = QFileDialog::getOpenFileNames();
+    QStringList list = QFileDialog::getOpenFileNames(
+                this\
+                ,"选择要添加的音乐文件"\
+                ,QStandardPaths::writableLocation(QStandardPaths::MusicLocation)\
+                ,"Audio(*.mp3)");
     if(!list.isEmpty()){
         play_list->clear();
         foreach (QString file_name, list) {
@@ -98,28 +111,29 @@ void AudioPlayer::onOpenAudio(void){
         player->setPlaylist(play_list);
     }
 }
+
 void AudioPlayer::onDial(int position)
 {
    player->setVolume(position);
 }
+
 void AudioPlayer::onMetaDataUpdate()
 {
    QString title,album_title,artist;
    QImage cover;
-   QPixmap pixmap;
-
    title = player->metaData("Title").toString();
    album_title = player->metaData("SubTitle").toString();
    artist= player->metaData("Author").toString();
    cover = player->metaData("CoverArtImage").value<QImage>();
    if(cover.isNull()){
-       pixmap = QPixmap(":/res/backgroud0.jpg");
+//       pixmap.load(":/res/backgroud0.jpg");
    }else{
-       pixmap.convertFromImage(cover);
    }
+
    lab_artist->setText(artist);
    lab_signer->setText(title);
-   lab_pic->setPixmap(pixmap.scaled(lab_pic->size()));
+
+
 
 }
 void AudioPlayer::onSlider(int position)

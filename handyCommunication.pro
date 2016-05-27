@@ -4,6 +4,7 @@
 #
 #-------------------------------------------------
 
+
 QT       += core gui sql network multimedia
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
@@ -34,7 +35,7 @@ HEADERS  += \
     audioplayer.h
 
 CONFIG += mobility
-MOBILITY = 
+MOBILITY =
 
 RESOURCES += \
     resource.qrc
@@ -45,5 +46,5 @@ DISTFILES += \
     readme.txt \
     question.txt \
     notes.txt
-SUBDIRS += subdirs
+
 

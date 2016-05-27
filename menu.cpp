@@ -1,6 +1,6 @@
 #include "menu.h"
 
-void Menu::newUI()
+void Menu::newComponent()
 {
     udpSocket = new Udp();
     menu_bar = new QMenuBar(this);
@@ -12,7 +12,7 @@ void Menu::newUI()
     tab_widget = new QTabWidget();
     widget_broadcast = new BroadCast(sysDB,udpSocket,userId,this);
     user_tree = new UserTree(sysDB,udpSocket);
-    audio_player = new AudioPlayer;
+//    audio_player = new AudioPlayer();
 
     /*root action*/
     add_group = new QAction("添加组",menu_root);
@@ -46,14 +46,14 @@ void Menu::setTab()
 {
     tab_widget->addTab(widget_broadcast,"广播");
     tab_widget->addTab(user_tree,"用户树");
-    tab_widget->addTab(audio_player,"播放音频");
+//    tab_widget->addTab(audio_player,"播放音频");
     tab_widget->addTab(new QWidget,"发送文件");
     tab_widget->addTab(new QWidget,"本人信息及设置");
     tab_widget->setTabPosition(QTabWidget::West);
     tab_widget->setTabShape(QTabWidget::Rounded);
 }
 
-void Menu::setUI()
+void Menu::setComponent()
 {
     setAction();
     setTab();
@@ -202,10 +202,11 @@ void Menu::setConnect()
 Menu::Menu(QString &Id, QSqlDatabase &db, QMainWindow *parent)
     : QMainWindow(parent),userId(Id),sysDB(db)
 {
-    newUI();
-    setUI();
+    newComponent();
+    setComponent();
     setConnect();
     udpSocket->send(QString(BROADCAST_ADDRESS)+QString(SEPARATE+userId+SEPARATE+udpSocket->getLocalIP()));
+    this->setTabShape(QTabWidget::Triangular);
 }
 
 Menu::~Menu()
