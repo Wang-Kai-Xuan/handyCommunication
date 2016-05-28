@@ -1,2 +1,0 @@
-1.explicit关键字有什么用？
-    explicit构造函数只能被显式调用

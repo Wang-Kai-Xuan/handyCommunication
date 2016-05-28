@@ -1,7 +1,0 @@
-1.void QWidget::closeEvent(QCloseEvent * event)
-this event handler is called with the given event when Qt receives a window close request for a top-level widget from the window system.
-可以在关闭应用程序是执行一些操作
-
-2、QLayout: Attempting to add QLayout "" to AudioPlayer "", which already has a layout
-    QMainWindow是默认有layout的，所以再次设置layout会失效。
-3、Q_ASSERT有什么用？
