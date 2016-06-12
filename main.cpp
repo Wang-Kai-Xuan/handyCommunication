@@ -22,12 +22,12 @@ int main(int argc, char *argv[])
     QSqlDatabase sysDB;
     openDB(sysDB);
 
-//    Start * w = new Start(sysDB);
-//    w->show();
+    Start * w = new Start(sysDB);
+    w->show();
 
-    QString id = "2222";
-    Menu * menu = new Menu(id,sysDB);
-    menu->show();
+//    QString id = "2222";
+//    Menu * menu = new Menu(id,sysDB);
+//    menu->show();
 
 //    AudioPlayer *audio_player = new AudioPlayer;
 //    audio_player->show();

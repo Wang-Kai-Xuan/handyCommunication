@@ -1,19 +1,20 @@
-* TOC
-{:toc}
-
 # 项目介绍
-本软件是Qt5开发框架下开发的在局域网通讯的工具软件。
+本软件是Qt5开发框架下开发的在局域网通讯的工具软件。用户要使用该软件，需要先注册一个ID，这是用户的唯一标识。登录时如果没有注册，系统会自动按其输入的ID注册。登录之后就可以使用通讯功能了。
+
+|名称|内容|
+|----------|-------|
+|运行环境|Qt5|
+|开发环境|Qt5+Window10|
+|使用对象|任何局域网内通讯的场合|
 
 # 版本更新
-采用Udp和Tcp协议
+|时间|版本|备注|
+|---|---|-----|
+|2016-6-12 01:31:22|Version1|实现了Version1的功能|
 
-# 运行环境
-由于Qt开发框架的跨平台特性，所有P主流平台都能够运行（window、Linux）
+# 图片展示
 
-# 开发环境
-Qt5+window
-
-# 详细功能：
+# Version1功能：
 ## 基本功能：
 1. 广播
 2. 组播
@@ -21,6 +22,8 @@ Qt5+window
 4. 发送文件
 
 ### root具有的权限：
+*默认root账户:0000，密码:0000,可以修改*
+
 1. 创建组:所需要的信息-组id、组长
 2. 删除组
 3. 修改组
@@ -49,20 +52,8 @@ Qt5+window
 
 ## 数据库设计：
 数据表种类：
+
 1. 注册用户信息（user）
 2. 组信息（_group）
 3. 用户聊天历史（user_history_id）
 4. 组聊天历史(group_history_id)
-
-```
-table:
-    user -> id password phone email qq sex introduce ip port isOnline
-    _group -> id master_id introduce
-    user_history_id -> id type content time
-    group_history_id -> id sender content time
-```
-# 使用对象
-任何在局域网内通讯的场合
-
-# 通信协议
-命令|数据

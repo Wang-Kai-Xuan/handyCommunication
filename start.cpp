@@ -100,7 +100,6 @@ void Start::onCheck()
 void Start::setConnect()
 {
     connect(okBtn,SIGNAL(clicked(bool)),this,SLOT(onCheck()));
-//    connect(lin_passwd,SIGNAL(editingFinished()),this,SLOT(onCheck()));
     connect(cancelBtn,SIGNAL(clicked(bool)),this,SLOT(close()));
 }
 

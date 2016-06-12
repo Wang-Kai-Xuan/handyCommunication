@@ -18,8 +18,8 @@ void UserTree::newUI()
 
 void UserTree::setUI()
 {
-    view_type->addItem("用户树");
-    view_type->addItem("所有用户");
+    view_type->addItem(show_str_user_tree);
+    view_type->addItem(show_str_all_user);
     view_type->setFixedWidth(100);
 
     child_glay->addWidget(chat_type,0,0,1,1);
@@ -48,6 +48,7 @@ void UserTree::setConnect()
     connect(hide_btn,SIGNAL(clicked(bool)),this,SLOT(onHideMessage()));
     connect(send_btn,SIGNAL(clicked(bool)),this,SLOT(onSendMessage()));
     connect(udpSocket,SIGNAL(readFinished()),this,SLOT(onRecvMessage()));
+    connect(view_type,SIGNAL(currentIndexChanged(QString)),this,SLOT(onIndexChangr(QString)));
 }
 
 void UserTree::onHideMessage()
@@ -67,6 +68,18 @@ void UserTree::onSendMessage()
 {
     QString id = chat_id->text();
     sercetChat(id);
+}
+
+void UserTree::onIndexChangr(QString index)
+{
+    qDebug()<<"index="<<index;
+    if(index == show_str_user_tree){
+        loadGroup();
+    }
+    if(index == show_str_all_user){
+        loadAllUser();
+    }
+
 }
 
 void UserTree::onRecvMessage()
@@ -120,9 +133,11 @@ void UserTree::onSelectUser(const QModelIndex &index)
 {
     QString object;
     QVariant type = index.data(CUSTOM_ROLE);
+    qDebug()<<"type.toInt()="<<type.toInt();
     switch(type.toInt()){
-    case ID:
+    case USER:
         object = index.data().toString();
+        qDebug()<<"object="<<object;
         showMessageUI();
         chat_type->setText("私信->");
         chat_id->setText(object);
@@ -139,6 +154,8 @@ void UserTree::onSelectUser(const QModelIndex &index)
 UserTree::UserTree(QSqlDatabase &db, Udp *socket):sysDB(db)
 {
     udpSocket = socket;
+    show_str_all_user = "所有用户";
+    show_str_user_tree = "用户树";
     newUI();
     setUI();
     loadGroup();
@@ -151,13 +168,34 @@ void UserTree::loadGroup()
     QSqlQuery sql(sysDB);
     group_list.clear();
     treeModel->clear();
+    treeModel->setHorizontalHeaderLabels(QStringList()<<QStringList("组")<<QStringList("组长")<<QStringList("说明"));
+
+    if(sql.exec("select count(*) from user;")){
+        while(sql.next()){
+            qint8 num = sql.value(0).toInt();
+            if(num == 0)
+                 QMessageBox::information(this,tr("提示"),tr("没有设置分组"));
+        }
+    }
+
+
+    QList<QStandardItem *> group_list;
     QStandardItem * group;
-    treeModel->setHorizontalHeaderLabels(QStringList()<<QStringList("编号")<<QStringList("组长")<<QStringList("说明"));
-    if(sql.exec("select id master_id from _group;")){
+    QStandardItem * master;
+    QStandardItem * introduce;
+    if(sql.exec("select id,master_id,introduce from _group;")){
         while(sql.next()){
             group = new QStandardItem(tr("%1").arg(sql.value(0).toString()));
+            master = new QStandardItem(tr("%1").arg(sql.value(1).toString()));
+            introduce = new QStandardItem(tr("%1").arg(sql.value(2).toString()));
+
             group->setData(GROUP,CUSTOM_ROLE);
-            treeModel->appendRow(group);
+            master->setData(MASTER,CUSTOM_ROLE);
+            introduce->setData(INTRODUCE,CUSTOM_ROLE);
+            group_list.append(group);
+            group_list.append(master);
+            group_list.append(introduce);
+            treeModel->appendRow(group_list);
             group_list.clear();
         }
     }else{
@@ -188,6 +226,32 @@ void UserTree::loadGroup()
                 member_list.clear();
             }
         }
+    }
+
+    tree_view->setModel(treeModel);
+}
+
+void UserTree::loadAllUser()
+{
+    QSqlQuery sql(sysDB);
+    treeModel->clear();
+    treeModel->setHorizontalHeaderLabels(QStringList()<<QStringList("ID")<<QStringList("姓名"));
+    QStandardItem * user;
+    QStandardItem * introduce;
+    QList<QStandardItem *> item_list;
+
+    if(sql.exec("select id,introduce from user;")){
+        while(sql.next()){
+            user = new QStandardItem(tr("%1").arg(sql.value(0).toString()));
+            introduce = new QStandardItem(tr("%1").arg(sql.value(1).toString()));
+            user->setData(USER,CUSTOM_ROLE);
+            item_list.append(user);
+            item_list.append(introduce);
+            treeModel->appendRow(item_list);
+            item_list.clear();
+        }
+    }else{
+        qDebug()<<sql.lastError();
     }
     tree_view->setModel(treeModel);
 }

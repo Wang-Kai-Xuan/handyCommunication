@@ -7,6 +7,9 @@
 class UserTree : public QWidget
 {
     Q_OBJECT
+private:
+    QString show_str_all_user;
+    QString show_str_user_tree;
 public:
     explicit UserTree(QSqlDatabase &db,Udp * socket);
     QStandardItemModel *treeModel;
@@ -37,6 +40,7 @@ public:
     void groupChat(QString &group_id);
     void sercetChat(QString &user_id);
     QString getUserIP(QString &user_id);
+    void loadAllUser();
 signals:
 
 public slots:
@@ -44,6 +48,7 @@ public slots:
     void onHideMessage();
     void onSendMessage();
     void onRecvMessage();
+    void onIndexChangr(QString index);
 };
 
 #endif // USER_TREE_H

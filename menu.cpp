@@ -12,7 +12,7 @@ void Menu::newComponent()
     tab_widget = new QTabWidget();
     widget_broadcast = new BroadCast(sysDB,udpSocket,userId,this);
     user_tree = new UserTree(sysDB,udpSocket);
-//    audio_player = new AudioPlayer();
+    audio_player = new AudioPlayer();
 
     /*root action*/
     add_group = new QAction("添加组",menu_root);
@@ -46,7 +46,7 @@ void Menu::setTab()
 {
     tab_widget->addTab(widget_broadcast,"广播");
     tab_widget->addTab(user_tree,"用户树");
-//    tab_widget->addTab(audio_player,"播放音频");
+    tab_widget->addTab(audio_player,"播放音频");
     tab_widget->addTab(new QWidget,"发送文件");
     tab_widget->addTab(new QWidget,"本人信息及设置");
     tab_widget->setTabPosition(QTabWidget::West);
@@ -110,19 +110,16 @@ void Menu::addGroup(QStringList &list)
 {
     QSqlQuery sql(sysDB);
     bool isOk = true;
-    if(!sql.exec(QString("insert into _group(id,master_id,introduce) values ('%1','%2','%3');")\
-                 .arg(list.at(0)).arg(list.at(1)).arg(list.at(2)))){
+    if(!sql.exec(QString("insert into _group(id,master_id,introduce) values ('%1','%2','%3');").arg(list.at(0)).arg(list.at(1)).arg(list.at(2)))){
         qDebug()<<sql.lastError()<<endl;
         isOk = false;
     }
-    if(!sql.exec(QString("create table _group_member_%1(member_id text primary key);")\
-        .arg(list.at(0)))){
+    if(!sql.exec(QString("create table _group_member_%1(member_id text primary key);").arg(list.at(0)))){
         qDebug()<<sql.lastError()<<endl;
         isOk = false;
     }
 
-    if(!sql.exec(QString("create table _group_history_%1(sender text not null,content text default 'null',time text default current_timestamp);")\
-        .arg(list.at(0)))){
+    if(!sql.exec(QString("create table _group_history_%1(sender text not null,content text default 'null',time text default current_timestamp);").arg(list.at(0)))){
         qDebug()<<sql.lastError()<<endl;
         isOk = false;
     }
