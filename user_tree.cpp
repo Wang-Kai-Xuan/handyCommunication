@@ -161,6 +161,7 @@ UserTree::UserTree(QSqlDatabase &db, Udp *socket):sysDB(db)
     loadGroup();
     setConnect();
     onHideMessage();
+    this->setStyleSheet("font: 12pt \"宋体\";");
 }
 
 void UserTree::loadGroup()

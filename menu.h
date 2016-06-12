@@ -5,6 +5,7 @@
 #include "broadcast.h"
 #include "user_tree.h"
 #include "audioplayer.h"
+#include "user_info.h"
 class Menu : public QMainWindow
 {
     Q_OBJECT
@@ -31,6 +32,8 @@ public:
     BroadCast * widget_broadcast;
     UserTree * user_tree;
     AudioPlayer * audio_player;
+    UserInfo * user_info;
+
     /*-------old code-------*/
     QHBoxLayout * hlay_top;
     ILabel * about_lab;

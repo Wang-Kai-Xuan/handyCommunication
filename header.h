@@ -8,6 +8,7 @@
 #include <QKeyEvent>
 #include <QEvent>
 #include <QWidget>
+#include <QTableWidgetItem>
 #include <QDialog>
 #include <QStandardPaths>
 #include <QProcess>
@@ -50,6 +51,7 @@
 #include <QTimer>
 #include "start.h"
 #include <QImageReader>
+#include <QTableWidget>
 
 #define SEPARATE "````"
 #define CUSTOM_ROLE Qt::UserRole + 1

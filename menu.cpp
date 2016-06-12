@@ -13,6 +13,7 @@ void Menu::newComponent()
     widget_broadcast = new BroadCast(sysDB,udpSocket,userId,this);
     user_tree = new UserTree(sysDB,udpSocket);
     audio_player = new AudioPlayer();
+    user_info= new UserInfo(sysDB,userId);
 
     /*root action*/
     add_group = new QAction("添加组",menu_root);
@@ -47,10 +48,11 @@ void Menu::setTab()
     tab_widget->addTab(widget_broadcast,"广播");
     tab_widget->addTab(user_tree,"用户树");
     tab_widget->addTab(audio_player,"播放音频");
-    tab_widget->addTab(new QWidget,"发送文件");
-    tab_widget->addTab(new QWidget,"本人信息及设置");
+//    tab_widget->addTab(new QWidget,"发送文件");
+    tab_widget->addTab(user_info,"本人信息及设置");
     tab_widget->setTabPosition(QTabWidget::West);
     tab_widget->setTabShape(QTabWidget::Rounded);
+    tab_widget->setStyleSheet("font: 14pt \"宋体\";");
 }
 
 void Menu::setComponent()
