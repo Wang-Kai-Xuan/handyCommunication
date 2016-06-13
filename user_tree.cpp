@@ -131,24 +131,26 @@ void UserTree::sercetChat(QString & user_id)
 
 void UserTree::onSelectUser(const QModelIndex &index)
 {
-    QString object;
+    QString item_id;
     QVariant type = index.data(CUSTOM_ROLE);
-    qDebug()<<"type.toInt()="<<type.toInt();
+
     switch(type.toInt()){
     case USER:
-        object = index.data().toString();
-        qDebug()<<"object="<<object;
+        item_id = index.data().toString();
         showMessageUI();
         chat_type->setText("私信->");
-        chat_id->setText(object);
+        chat_id->setText(item_id);
         break;
     case GROUP:
-        object = index.data().toString();
+        item_id = index.data().toString();
         showMessageUI();
         chat_type->setText("组播->");
-        chat_id->setText(object);
+        chat_id->setText(item_id);
         break;
     }
+    qDebug()<<"item_id="<<item_id;
+    qDebug()<<"item_ip="<<getUserIP(item_id);
+
 }
 
 UserTree::UserTree(QSqlDatabase &db, Udp *socket):sysDB(db)
@@ -164,18 +166,44 @@ UserTree::UserTree(QSqlDatabase &db, Udp *socket):sysDB(db)
     this->setStyleSheet("font: 12pt \"宋体\";");
 }
 
+void UserTree::loadMember(QSqlQuery &sql)
+{
+    QStandardItem * group;
+    QStandardItem * member_id;
+    QList<QStandardItem *>  item_list;
+    QString introduce;
+    QSqlQuery &sql1 = sql;
+    for(int count = 0; count < treeModel->rowCount();count++){
+        group = treeModel->item(count);
+        if(sql.exec(QString("select member_id from _group_member_%1;").arg(treeModel->index(count,0).data().toString()))){
+            while(sql.next()){
+                member_id = new QStandardItem(QString("%1").arg(sql.value(0).toString()));
+                member_id->setData(USER,CUSTOM_ROLE);
+                item_list.append(member_id);
+                item_list.append(new QStandardItem("   "));
+                if(sql1.exec(QString("select introduce from user where id=%1;").arg(sql.value(0).toString()))){
+                    while(sql1.next()){
+                        item_list.append(new QStandardItem(QString("%1").arg(sql1.value(0).toString())));
+                    }
+                }
+
+                group->appendRow(item_list);
+                item_list.clear();
+            }
+        }
+    }
+}
+
 void UserTree::loadGroup()
 {
     QSqlQuery sql(sysDB);
     group_list.clear();
     treeModel->clear();
-    treeModel->setHorizontalHeaderLabels(QStringList()<<QStringList("组")<<QStringList("组长")<<QStringList("说明"));
-
+    treeModel->setHorizontalHeaderLabels(QStringList()<<QStringList("ID")<<QStringList("组长")<<QStringList("说明"));
     if(sql.exec("select count(*) from user;")){
         while(sql.next()){
             qint8 num = sql.value(0).toInt();
-            if(num == 0)
-                 QMessageBox::information(this,tr("提示"),tr("没有设置分组"));
+            if(num == 0)QMessageBox::information(this,tr("提示"),tr("没有设置分组"));
         }
     }
 
@@ -193,9 +221,11 @@ void UserTree::loadGroup()
             group->setData(GROUP,CUSTOM_ROLE);
             master->setData(MASTER,CUSTOM_ROLE);
             introduce->setData(INTRODUCE,CUSTOM_ROLE);
+
             group_list.append(group);
             group_list.append(master);
             group_list.append(introduce);
+
             treeModel->appendRow(group_list);
             group_list.clear();
         }
@@ -203,31 +233,7 @@ void UserTree::loadGroup()
         qDebug()<<sql.lastError();
     }
 
-    QStandardItem * item;
-    QStandardItem * item_id;
-    QStandardItem * item_name;
-    QStandardItem * item_status;
-    QList<QStandardItem *> member_list;
-    for(int count = 0; count < treeModel->rowCount();count++){
-        item = treeModel->item(count);
-        if(sql.exec(QString("select member_id from _group_member_%1;").arg(treeModel->index(count,0).data().toString()))){
-            while(sql.next()){
-                item_id = new QStandardItem(QString("%1").arg(sql.value(0).toString()));
-//                item_name = new QStandardItem(QString("%1").arg(sql.value(1).toString()));
-//                item_status = new QStandardItem(QString("%1").arg(sql.value(2).toString()));
-
-                item_id->setData(ID,CUSTOM_ROLE);
-//                item_name->setData(NAME,CUSTOM_ROLE);
-//                item_status->setData(STATUS,CUSTOM_ROLE);
-
-                member_list.append(item_id);
-//                member_list.append(item_name);
-//                member_list.append(item_status);
-                item->appendRow(member_list);
-                member_list.clear();
-            }
-        }
-    }
+    loadMember(sql);
 
     tree_view->setModel(treeModel);
 }

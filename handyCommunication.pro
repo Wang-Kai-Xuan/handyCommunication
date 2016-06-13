@@ -22,7 +22,8 @@ SOURCES += main.cpp \
     user_tree.cpp \
     udp.cpp \
     audioplayer.cpp \
-    user_info.cpp
+    user_info.cpp \
+    mymessage.cpp
 
 HEADERS  += \
     start.h \
@@ -34,7 +35,8 @@ HEADERS  += \
     header.h \
     udp.h \
     audioplayer.h \
-    user_info.h
+    user_info.h \
+    mymessage.h
 
 CONFIG += mobility
 MOBILITY =

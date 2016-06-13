@@ -41,6 +41,8 @@ public:
     void sercetChat(QString &user_id);
     QString getUserIP(QString &user_id);
     void loadAllUser();
+    void loadMember(QSqlQuery &sql);
+
 signals:
 
 public slots:

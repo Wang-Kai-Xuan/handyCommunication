@@ -6,6 +6,7 @@
 #include "user_tree.h"
 #include "audioplayer.h"
 #include "user_info.h"
+#include "mymessage.h"
 class Menu : public QMainWindow
 {
     Q_OBJECT
@@ -33,6 +34,7 @@ public:
     UserTree * user_tree;
     AudioPlayer * audio_player;
     UserInfo * user_info;
+    MyMessage * my_message;
 
     /*-------old code-------*/
     QHBoxLayout * hlay_top;

@@ -14,6 +14,7 @@ void Menu::newComponent()
     user_tree = new UserTree(sysDB,udpSocket);
     audio_player = new AudioPlayer();
     user_info= new UserInfo(sysDB,userId);
+    my_message= new MyMessage();
 
     /*root action*/
     add_group = new QAction("添加组",menu_root);
@@ -45,6 +46,7 @@ void Menu::setAction()
 
 void Menu::setTab()
 {
+    tab_widget->addTab(my_message,"我的消息");
     tab_widget->addTab(widget_broadcast,"广播");
     tab_widget->addTab(user_tree,"用户树");
     tab_widget->addTab(audio_player,"播放音频");
@@ -167,6 +169,7 @@ void Menu::onAddUser()
                                          ,tr("用户ID")\
                                          ,QLineEdit::Normal\
                                          ,NULL, &ok);
+
 
     if (ok && !text.isEmpty()){
         if(!sql.exec(QString("insert into _group_member_%1(member_id) values ('%2');")\

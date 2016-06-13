@@ -83,7 +83,6 @@ void UserInfo::onItemDataChanged(QTableWidgetItem* item)
         src = "qq";
         break;
     }
-//    sql_str = QString("update user set %1 = '%2' where id = '%3';").arg(src).arg(item->text()).arg(user_id);
     QSqlQuery sql(sys_db);
     if(!sql.exec(QString("update user set %1 = '%2' where id = '%3';").arg(src).arg(item->text()).arg(user_id)))
         qDebug()<<sql.lastError();
