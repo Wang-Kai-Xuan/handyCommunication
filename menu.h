@@ -37,7 +37,7 @@ public:
     UserTree * user_tree;
     AudioPlayer * audio_player;
     UserInfo * user_info;
-    MyMessage * my_message;
+//    MyMessage * my_message;
 
     /*-------old code-------*/
     QHBoxLayout * hlay_top;

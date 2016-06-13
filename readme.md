@@ -14,6 +14,17 @@
 |2016-1-23 15:58:43|Version1.2|实现用户数据的树形的显示|
 |2016-6-13 00:08:31|Version1.9|实现修改用户消息|
 |2016-6-13 14:06:45|Version1.9.1|修改广播消息、私信消息的显示|
+|2016-6-13 22:35:00|Version1.9.2|增加显示删除用户、组的功能|
+
+# 截图
+## Version1.9.2
+1. http://o7kxaen2p.bkt.clouddn.com/handyCommunication%E8%BD%AF%E4%BB%B6%E5%8A%9F%E8%83%BD%E6%88%AA%E5%9B%BE%20%285%29.png
+2. http://o7kxaen2p.bkt.clouddn.com/handyCommunication%E8%BD%AF%E4%BB%B6%E5%8A%9F%E8%83%BD%E6%88%AA%E5%9B%BE%20%281%29.png
+3. http://o7kxaen2p.bkt.clouddn.com/handyCommunication%E8%BD%AF%E4%BB%B6%E5%8A%9F%E8%83%BD%E6%88%AA%E5%9B%BE%20%282%29.png
+4. http://o7kxaen2p.bkt.clouddn.com/handyCommunication%E8%BD%AF%E4%BB%B6%E5%8A%9F%E8%83%BD%E6%88%AA%E5%9B%BE%20%283%29.png
+5. http://o7kxaen2p.bkt.clouddn.com/handyCommunication%E8%BD%AF%E4%BB%B6%E5%8A%9F%E8%83%BD%E6%88%AA%E5%9B%BE%20%284%29.png
+
+
 
 # 注意事项
 1. 默认root账户:0000，密码:0000,可以修改
