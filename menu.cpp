@@ -50,7 +50,6 @@ void Menu::setTab()
     tab_widget->addTab(widget_broadcast,"广播");
     tab_widget->addTab(user_tree,"通讯列表");
     tab_widget->addTab(audio_player,"播放音频");
-//    tab_widget->addTab(new QWidget,"发送文件");
     tab_widget->addTab(user_info,"本人信息及设置");
     tab_widget->setTabPosition(QTabWidget::West);
     tab_widget->setTabShape(QTabWidget::Rounded);
@@ -156,6 +155,41 @@ void Menu::onAddGroup()
     }
     user_tree->loadGroup();
 }
+
+void Menu::onDelGroup()
+{
+    /*获取需要删除的组ID*/
+    bool ok;
+    QSqlQuery sql(sysDB);
+    QString text = QInputDialog::getText(this\
+                                         ,tr("删除组")\
+                                         ,tr("组ID")\
+                                         ,QLineEdit::Normal\
+                                         ,NULL, &ok);
+
+    if (!ok && text.isEmpty()){
+        QMessageBox::warning(this, tr("提示"),tr("输入格式有误，请重新输入！"),QMessageBox::Ok);
+        return;
+    }
+    /*在group里面删除组ID及其管理员*/
+    if(!sql.exec(QString("delete from _group where id = %1;").arg(text))){
+        qDebug()<<"onDelGroup"<<sql.lastError()<<endl;
+    }
+    /*删除成员表*/
+    if(!sql.exec(QString("drop table _group_member_%1;").arg(text))){
+        qDebug()<<"onDelGroup"<<sql.lastError()<<endl;
+    }
+
+    /*删除在组聊天记录表*/
+    if(!sql.exec(QString("drop table _group_history_%1;").arg(text))){
+        qDebug()<<"onDelGroup"<<sql.lastError()<<endl;
+    }
+}
+
+void Menu::onAltGroup()
+{
+
+}
 void Menu::onAddUser()
 {
     QSqlQuery sql(sysDB);
@@ -184,6 +218,16 @@ void Menu::onAddUser()
     user_tree->loadGroup();
 }
 
+void Menu::onAltUser()
+{
+
+}
+
+void Menu::onDelUser()
+{
+
+}
+
 void Menu::onReadMessage()
 {
     QStringList list = udpSocket->getNetWorkContent().split(SEPARATE);
@@ -197,7 +241,11 @@ void Menu::onReadMessage()
 void Menu::setConnect()
 {
     connect(add_group,SIGNAL(triggered(bool)),this,SLOT(onAddGroup()));
+    connect(del_group,SIGNAL(triggered(bool)),this,SLOT(onDelGroup()));
+    connect(alt_group,SIGNAL(triggered(bool)),this,SLOT(onAltGroup()));
     connect(add_user,SIGNAL(triggered(bool)),this,SLOT(onAddUser()));
+    connect(del_user,SIGNAL(triggered(bool)),this,SLOT(onDelUser()));
+    connect(alt_user,SIGNAL(triggered(bool)),this,SLOT(onAltUser()));
     connect(udpSocket,SIGNAL(readSecretMessage()),this,SLOT(onReadMessage()));
 }
 

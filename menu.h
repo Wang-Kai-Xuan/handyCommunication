@@ -75,7 +75,11 @@ public slots:
 
     void onReadMessage(void);
     void onAddGroup();
+    void onDelGroup();
+    void onAltGroup();
     void onAddUser();
+    void onAltUser();
+    void onDelUser();
 };
 
 #endif // SERVER_H
