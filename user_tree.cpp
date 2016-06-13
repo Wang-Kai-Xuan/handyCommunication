@@ -10,7 +10,7 @@ void UserTree::newUI()
     msg_input = new QTextEdit;
     msg_output = new QTextEdit;
     hide_btn = new QPushButton("隐藏(&H)");
-    send_btn = new QPushButton("发送(&H)");
+    send_btn = new QPushButton("发送(&S)");
     chat_type = new QLabel("...");
     chat_id= new QLabel("...");
     view_type = new QComboBox;
@@ -38,6 +38,7 @@ void UserTree::setUI()
     this->setLayout(glay);
 
     tree_view->setContextMenuPolicy(Qt::CustomContextMenu);
+    msg_output->setStyleSheet("font: 12pt \"华文行楷\";");
 }
 
 void UserTree::setConnect()
@@ -67,7 +68,12 @@ void UserTree::onHideMessage()
 void UserTree::onSendMessage()
 {
     QString id = chat_id->text();
-    sercetChat(id);
+    if(chat_type->text() == "私信->"){
+        sercetChat(id);
+    }
+    if(chat_type->text() == "组播->"){
+        groupChat(id);
+    }
 }
 
 void UserTree::onIndexChangr(QString index)
@@ -88,6 +94,8 @@ void UserTree::onRecvMessage()
     if(list.size() != 3) return ;
     if(list.at(0) != QString(SECRET_CHAT)) return ;
     msg_output->append(QString("<私信:%1>%2").arg(list.at(1)).arg(list.at(2)));
+    msg_output->setAlignment(Qt::AlignLeft);
+
 }
 
 void UserTree::showMessageUI()
@@ -105,7 +113,7 @@ void UserTree::showMessageUI()
 
 void UserTree::groupChat(QString & group_id)
 {
-
+    qDebug()<<"in groupChat";
 }
 
 QString UserTree::getUserIP(QString & user_id)
@@ -124,8 +132,17 @@ QString UserTree::getUserIP(QString & user_id)
 
 }
 void UserTree::sercetChat(QString & user_id)
-{
-    udpSocket->send(QString(SECRET_CHAT)+QString(SEPARATE+user_id+SEPARATE+msg_input->document()->toPlainText()),getUserIP(user_id));
+{    
+    msg_output->setTextColor(QColor("blue"));
+    msg_output->append(msg_input->document()->toPlainText());
+    msg_output->setAlignment(Qt::AlignRight);
+
+    udpSocket->send(QString(SECRET_CHAT)+\
+                    QString(SEPARATE)+\
+                    QString(SEPARATE+own_id)+\
+                    QString(SEPARATE+user_id)+\
+                    QString(SEPARATE+msg_input->document()->toPlainText()),\
+                    getUserIP(user_id));
     msg_input->clear();
 }
 
@@ -141,19 +158,17 @@ void UserTree::onSelectUser(const QModelIndex &index)
         chat_type->setText("私信->");
         chat_id->setText(item_id);
         break;
+
     case GROUP:
         item_id = index.data().toString();
-        showMessageUI();
+        groupChat(item_id);
         chat_type->setText("组播->");
         chat_id->setText(item_id);
         break;
     }
-    qDebug()<<"item_id="<<item_id;
-    qDebug()<<"item_ip="<<getUserIP(item_id);
-
 }
 
-UserTree::UserTree(QSqlDatabase &db, Udp *socket):sysDB(db)
+UserTree::UserTree(QSqlDatabase &db, QString &id, Udp *socket):sysDB(db),own_id(id)
 {
     udpSocket = socket;
     show_str_all_user = "所有用户";

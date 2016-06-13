@@ -11,9 +11,10 @@ private:
     QString show_str_all_user;
     QString show_str_user_tree;
 public:
-    explicit UserTree(QSqlDatabase &db,Udp * socket);
+    explicit UserTree(QSqlDatabase &db,QString &id,Udp * socket);
     QStandardItemModel *treeModel;
     QTreeView * tree_view;
+    QString &own_id;
     QSqlDatabase &sysDB;
     QList<QStandardItem *> group_list;
     QList<QStandardItem *> member_list;
@@ -38,7 +39,7 @@ public:
 
     void showMessageUI();
     void groupChat(QString &group_id);
-    void sercetChat(QString &user_id);
+    void sercetChat(QString &recv_user_id);
     QString getUserIP(QString &user_id);
     void loadAllUser();
     void loadMember(QSqlQuery &sql);

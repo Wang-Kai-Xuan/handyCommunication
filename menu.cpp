@@ -11,7 +11,7 @@ void Menu::newComponent()
     /*QTabWidget*/
     tab_widget = new QTabWidget();
     widget_broadcast = new BroadCast(sysDB,udpSocket,userId,this);
-    user_tree = new UserTree(sysDB,udpSocket);
+    user_tree = new UserTree(sysDB,userId,udpSocket);
     audio_player = new AudioPlayer();
     user_info= new UserInfo(sysDB,userId);
     my_message= new MyMessage();

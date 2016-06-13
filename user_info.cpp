@@ -46,8 +46,7 @@ void UserInfo::loadData()
 {
     QStringList data_list = getUserData();
     QStringList head_list;
-    head_list <<"姓名"<< "性别" << "电话号码" << "邮箱" << "QQ账户";
-
+    head_list <<"ID"<<"姓名"<< "性别" << "电话号码" << "邮箱" << "QQ账户";
     foreach (QString head, head_list) {
         QTableWidgetItem *item = new QTableWidgetItem(head);
         int row = tableWidget->rowCount();
@@ -55,11 +54,13 @@ void UserInfo::loadData()
         tableWidget->insertRow(row);
         tableWidget->setItem(row,0,item);
     }
+
+    static int row = 0;
+    tableWidget->setItem(row,1,new QTableWidgetItem(user_id));
     foreach (QString data, data_list) {
-        static int row = 0;
+        row++;
         QTableWidgetItem *item = new QTableWidgetItem(data);
         tableWidget->setItem(row,1,item);
-        row++;
     }
 }
 

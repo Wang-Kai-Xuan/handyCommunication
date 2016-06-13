@@ -38,6 +38,8 @@ void Udp::recv(void)
         }
     }
     emit readFinished();
+
+    qDebug()<<"in recv="<<recvData;
 }
 
 void Udp::print(void)
