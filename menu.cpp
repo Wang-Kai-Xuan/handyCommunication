@@ -198,7 +198,7 @@ void Menu::setConnect()
 {
     connect(add_group,SIGNAL(triggered(bool)),this,SLOT(onAddGroup()));
     connect(add_user,SIGNAL(triggered(bool)),this,SLOT(onAddUser()));
-    connect(udpSocket,SIGNAL(readFinished()),this,SLOT(onReadMessage()));
+    connect(udpSocket,SIGNAL(readSecretMessage()),this,SLOT(onReadMessage()));
 }
 
 Menu::Menu(QString &Id, QSqlDatabase &db, QMainWindow *parent)

@@ -24,14 +24,24 @@ void BroadCast::setUI()
 void BroadCast::setConnect()
 {
     connect(send_btn,SIGNAL(clicked(bool)),this,SLOT(onSendMessage()));
-    connect(udpSocket,SIGNAL(readFinished()),this,SLOT(onReadMessage()));
+    connect(udpSocket,SIGNAL(readBroadCastMessage()),this,SLOT(onReadMessage()));
 }
 
 void BroadCast::onReadMessage()
 {
     QStringList list = udpSocket->getNetWorkContent().split(SEPARATE);
     if(list.at(0) == QString(BROADCAST)){
-        show_message->append(QString("<%1>%2").arg(list.at(1)).arg(list.at(2)));
+
+        if(list.at(1) == user_id){
+            show_message->setTextColor(QColor("blue"));
+            show_message->append(QString("%1").arg(list.at(2)));
+            show_message->setAlignment(Qt::AlignRight);
+        }else{
+            show_message->setTextColor(QColor("black"));
+            show_message->append(QString("<%1>%2").arg(list.at(1)).arg(list.at(2)));
+            show_message->setAlignment(Qt::AlignLeft);
+
+        }
         QSqlQuery sql(sysDB);
         if(!sql.exec(QString("insert into broadcast_history(sender,content) values ('%1','%2');")\
                      .arg(list.at(1)).arg(list.at(2)))){

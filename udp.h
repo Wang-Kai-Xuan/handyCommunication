@@ -30,7 +30,8 @@ public slots:
     void recv();
     void print();
 signals:
-    void readFinished();
+    void readSecretMessage();
+    void readBroadCastMessage();
 };
 
 #endif // UDP_H

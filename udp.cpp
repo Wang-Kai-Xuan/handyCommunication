@@ -37,9 +37,12 @@ void Udp::recv(void)
             qDebug()<<udpSocket->errorString();
         }
     }
-    emit readFinished();
-
-    qDebug()<<"in recv="<<recvData;
+    QStringList list = getNetWorkContent().split(SEPARATE);
+    if(list.at(0) == QString(SECRET_CHAT)){
+        emit readSecretMessage();
+    }else if (list.at(0) == QString(BROADCAST)) {
+        emit readBroadCastMessage();
+    }
 }
 
 void Udp::print(void)

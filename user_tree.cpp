@@ -48,7 +48,7 @@ void UserTree::setConnect()
     connect(tree_view,SIGNAL(clicked(QModelIndex)),this,SLOT(onSelectUser(QModelIndex)));
     connect(hide_btn,SIGNAL(clicked(bool)),this,SLOT(onHideMessage()));
     connect(send_btn,SIGNAL(clicked(bool)),this,SLOT(onSendMessage()));
-    connect(udpSocket,SIGNAL(readFinished()),this,SLOT(onRecvMessage()));
+    connect(udpSocket,SIGNAL(readSecretMessage()),this,SLOT(onRecvMessage()));
     connect(view_type,SIGNAL(currentIndexChanged(QString)),this,SLOT(onIndexChangr(QString)));
 }
 
@@ -91,11 +91,15 @@ void UserTree::onIndexChangr(QString index)
 void UserTree::onRecvMessage()
 {
     QStringList list =  udpSocket->getNetWorkContent().split(SEPARATE);
-    if(list.size() != 3) return ;
-    if(list.at(0) != QString(SECRET_CHAT)) return ;
-    msg_output->append(QString("<私信:%1>%2").arg(list.at(1)).arg(list.at(2)));
-    msg_output->setAlignment(Qt::AlignLeft);
+    foreach (QString str, list) {
+        qDebug()<<"str="<<str;
+    }
 
+    if(list.size() != 4) return ;
+    if(list.at(2) != own_id)return ;
+    msg_output->setTextColor(QColor("black"));
+    msg_output->append(list.at(3));
+    msg_output->setAlignment(Qt::AlignLeft);
 }
 
 void UserTree::showMessageUI()
@@ -138,7 +142,6 @@ void UserTree::sercetChat(QString & user_id)
     msg_output->setAlignment(Qt::AlignRight);
 
     udpSocket->send(QString(SECRET_CHAT)+\
-                    QString(SEPARATE)+\
                     QString(SEPARATE+own_id)+\
                     QString(SEPARATE+user_id)+\
                     QString(SEPARATE+msg_input->document()->toPlainText()),\
