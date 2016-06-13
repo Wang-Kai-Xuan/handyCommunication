@@ -6,7 +6,8 @@ void Menu::newComponent()
     menu_bar = new QMenuBar(this);
     menu_setting= new QMenu("设置(&S)");
     menu_root= new QMenu("root功能(&R)");
-    menu_master= new QMenu("组长功能(&M)");
+    menu_master= new QMenu("管理员功能(&M)");
+    menu_about= new QMenu("关于(&A)");
 
     /*QTabWidget*/
     tab_widget = new QTabWidget();
@@ -24,6 +25,8 @@ void Menu::newComponent()
     add_user= new QAction("添加用户",menu_master);
     del_user= new QAction("删除用户",menu_master);
     alt_user= new QAction("修改用户",menu_master);
+
+    about_me = new QAction("关于我",menu_about);
 }
 
 void Menu::setAction()
@@ -39,9 +42,12 @@ void Menu::setAction()
     menu_master->addAction(del_user);
     menu_master->addAction(alt_user);
 
+    menu_about->addAction(about_me);
+
     menu_bar->addMenu(menu_setting);
     menu_bar->addMenu(menu_root);
     menu_bar->addMenu(menu_master);
+    menu_bar->addMenu(menu_about);
 }
 
 void Menu::setTab()
@@ -221,7 +227,7 @@ void Menu::onAddUser()
     }
     /*在组中添加用户信息*/
     if(!sql.exec(QString("insert into _group_member_%1(member_id) values ('%2');")\
-                 .arg(getGroupID(userId)).arg(text))){
+                 .arg(getGroupID(userId)).arg(list.at(0)))){
         qDebug()<<"onAddUser"<<sql.lastError()<<endl;
         QMessageBox::warning(this, tr("提示"),tr("增加用户失败"),QMessageBox::Ok);
     }
@@ -235,6 +241,27 @@ void Menu::onAltUser()
 
 void Menu::onDelUser()
 {
+    /*获取需要删除的用户ID*/
+    bool ok;
+    QSqlQuery sql(sysDB);
+    QString text = QInputDialog::getText(this\
+                                         ,tr("删除成员")\
+                                         ,tr("成员ID")\
+                                         ,QLineEdit::Normal\
+                                         ,NULL, &ok);
+
+    if (!ok && text.isEmpty()){
+        QMessageBox::warning(this, tr("提示"),tr("输入格式有误，请重新输入！"),QMessageBox::Ok);
+        return;
+    }
+    /*在获取管理员管理的组*/
+    QString group_id = getGroupID(userId);
+    qDebug()<<"group_id="<<group_id;
+    /*在成员表删除用户*/
+    if(!sql.exec(QString("delete from _group_member_%1 where member_id = '%2';").arg(group_id).arg(text))){
+        qDebug()<<"onDelUser"<<sql.lastError()<<endl;
+    }
+
 
 }
 

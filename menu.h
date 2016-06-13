@@ -19,6 +19,7 @@ public:
     QMenu *menu_setting;
     QMenu *menu_root;
     QMenu *menu_master;
+    QMenu *menu_about;
     /*-------root action-------*/
     QAction *add_group;
     QAction *del_group;
@@ -28,6 +29,8 @@ public:
     QAction *add_user;
     QAction *del_user;
     QAction *alt_user;
+
+    QAction *about_me;
 
     QTabWidget * tab_widget;
     BroadCast * widget_broadcast;
