@@ -188,7 +188,7 @@ void Menu::onDelGroup()
 
 void Menu::onAltGroup()
 {
-
+    QMessageBox::warning(this, tr("提示"),tr("未实现，该功能并非重要的功能（可以变相解决）"),QMessageBox::Ok);
 }
 void Menu::onAddUser()
 {
@@ -197,30 +197,40 @@ void Menu::onAddUser()
         QMessageBox::warning(this, tr("提示"),tr("需要管理员权限！"),QMessageBox::Ok);
         return ;
     }
+    /*获取用户的主要的信息：id password*/
     bool ok;
     QString text = QInputDialog::getText(this\
                                          ,tr("增加用户")\
-                                         ,tr("用户ID")\
+                                         ,tr("格式：用户ID 用户密码")\
                                          ,QLineEdit::Normal\
                                          ,NULL, &ok);
 
 
-    if (ok && !text.isEmpty()){
-        if(!sql.exec(QString("insert into _group_member_%1(member_id) values ('%2');")\
-                     .arg(getGroupID(userId)).arg(text))){
-            qDebug()<<sql.lastError()<<endl;
-            QMessageBox::warning(this, tr("提示"),tr("增加用户失败"),QMessageBox::Ok);
-        }
-    }else{
+    if (!ok && text.isEmpty())
         QMessageBox::warning(this, tr("提示"),tr("输入格式有误，请重新输入！"),QMessageBox::Ok);
+
+    /*在user添加用户信息*/
+    QStringList list = text.split(' ');
+    if(!sql.exec(QString("insert into user(id,password)values('%1','%2');").arg(list.at(0)).arg(list.at(1)))){
+        qDebug()<<"onAddUser"<<sql.lastError()<<endl;
     }
 
+    /*创建用户聊天记录表*/
+    if(!sql.exec(QString("create table user_history_%1(sender text not null,recver text not null,content text default 'null',time text default current_timestamp);").arg(list.at(0)))){
+        qDebug()<<"onAddUser"<<sql.lastError()<<endl;
+    }
+    /*在组中添加用户信息*/
+    if(!sql.exec(QString("insert into _group_member_%1(member_id) values ('%2');")\
+                 .arg(getGroupID(userId)).arg(text))){
+        qDebug()<<"onAddUser"<<sql.lastError()<<endl;
+        QMessageBox::warning(this, tr("提示"),tr("增加用户失败"),QMessageBox::Ok);
+    }
     user_tree->loadGroup();
 }
 
 void Menu::onAltUser()
 {
-
+    QMessageBox::warning(this, tr("提示"),tr("未实现，该功能并非重要的功能（可以变相解决）"),QMessageBox::Ok);
 }
 
 void Menu::onDelUser()
