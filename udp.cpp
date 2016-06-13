@@ -42,6 +42,8 @@ void Udp::recv(void)
         emit readSecretMessage();
     }else if (list.at(0) == QString(BROADCAST)) {
         emit readBroadCastMessage();
+    }else if (list.at(0) == QString(GROUP_CHAT)) {
+        emit readGroupMessage();
     }
 }
 

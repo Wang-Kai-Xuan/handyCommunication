@@ -53,6 +53,7 @@ public slots:
     void onHideMessage();
     void onSendMessage();
     void onRecvMessage();
+    void onRecvGroupMessage();
     void onIndexChangr(QString index);
 };
 

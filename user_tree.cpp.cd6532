@@ -49,7 +49,6 @@ void UserTree::setConnect()
     connect(hide_btn,SIGNAL(clicked(bool)),this,SLOT(onHideMessage()));
     connect(send_btn,SIGNAL(clicked(bool)),this,SLOT(onSendMessage()));
     connect(udpSocket,SIGNAL(readSecretMessage()),this,SLOT(onRecvMessage()));
-    connect(udpSocket,SIGNAL(readGroupMessage()),this,SLOT(onRecvGroupMessage()));
     connect(view_type,SIGNAL(currentIndexChanged(QString)),this,SLOT(onIndexChangr(QString)));
 }
 
@@ -92,26 +91,15 @@ void UserTree::onIndexChangr(QString index)
 void UserTree::onRecvMessage()
 {
     QStringList list =  udpSocket->getNetWorkContent().split(SEPARATE);
+    foreach (QString str, list) {
+        qDebug()<<"str="<<str;
+    }
+
     if(list.size() != 4) return ;
     if(list.at(2) != own_id)return ;
     msg_output->setTextColor(QColor("black"));
     msg_output->append(list.at(3));
     msg_output->setAlignment(Qt::AlignLeft);
-}
-
-void UserTree::onRecvGroupMessage()
-{
-    QStringList list =  udpSocket->getNetWorkContent().split(SEPARATE);
-    foreach (QString str, list) {
-        qDebug()<<"str="<<str;
-    }
-    if(list.size() != 5) return ;
-    /*判断是不是发给自己的组消息*/
-    if(list.at(3) != own_id)return ;
-    msg_output->setTextColor(QColor("black"));
-    msg_output->append(QString("<组播"+list.at(2)+">"+list.at(4)));
-    msg_output->setAlignment(Qt::AlignLeft);
-
 }
 
 void UserTree::showMessageUI()
@@ -143,20 +131,10 @@ void UserTree::groupChat(QString & group_id)
 {
     /*获取组的成员名单*/
     QStringList list = getGroupMember(group_id);
-
-    /*向每个成员发送消息*/
     foreach (QString str, list) {
-        udpSocket->send(QString(GROUP_CHAT)+\
-                        QString(SEPARATE+own_id)+\
-                        QString(SEPARATE+group_id)+\
-                        QString(SEPARATE+str)+\
-                        QString(SEPARATE+msg_input->document()->toPlainText()));
+        qDebug()<<"str="<<str;
     }
-    msg_output->setTextColor(QColor("blue"));
-    msg_output->append(msg_input->document()->toPlainText());
-    msg_output->setAlignment(Qt::AlignRight);
-    msg_input->clear();
-
+    /*向每个成员发送消息*/
     /*添加组的聊天历史*/
 }
 
@@ -228,9 +206,7 @@ void UserTree::loadMember(QSqlQuery &sql)
     QStandardItem * group;
     QStandardItem * member_id;
     QList<QStandardItem *>  item_list;
-    /*这个地方不要使用引用，因为引用是一个对象的别名，深刻理解*/
-    QSqlQuery sql1 = sql;
-    /*循环次数与组数相等*/
+    QSqlQuery &sql1 = sql;
     for(int count = 0; count < treeModel->rowCount();count++){
         group = treeModel->item(count);
         if(sql.exec(QString("select member_id from _group_member_%1;").arg(treeModel->index(count,0).data().toString()))){
@@ -239,9 +215,10 @@ void UserTree::loadMember(QSqlQuery &sql)
                 member_id->setData(USER,CUSTOM_ROLE);
                 item_list.append(member_id);
                 item_list.append(new QStandardItem("   "));
-                if(sql1.exec(QString("select introduce from user where id='%1';").arg(sql.value(0).toString()))){
+                if(sql1.exec(QString("select introduce from user where id=%1;").arg(sql.value(0).toString()))){
                     while(sql1.next()){
                         item_list.append(new QStandardItem(QString("%1").arg(sql1.value(0).toString())));
+                        qDebug()<<"loadMember="<<sql1.value(0).toString();
                     }
                 }
                 group->appendRow(item_list);
@@ -263,6 +240,7 @@ void UserTree::loadGroup()
             if(num == 0)QMessageBox::information(this,tr("提示"),tr("没有设置分组"));
         }
     }
+
 
     QList<QStandardItem *> group_list;
     QStandardItem * group;

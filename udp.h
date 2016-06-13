@@ -32,6 +32,7 @@ public slots:
 signals:
     void readSecretMessage();
     void readBroadCastMessage();
+    void readGroupMessage();
 };
 
 #endif // UDP_H

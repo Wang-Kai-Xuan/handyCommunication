@@ -261,8 +261,6 @@ void Menu::onDelUser()
     if(!sql.exec(QString("delete from _group_member_%1 where member_id = '%2';").arg(group_id).arg(text))){
         qDebug()<<"onDelUser"<<sql.lastError()<<endl;
     }
-
-
 }
 
 void Menu::onReadMessage()
