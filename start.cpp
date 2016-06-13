@@ -66,8 +66,10 @@ void Start::check()
     }else{
         if(sql.exec(QString("insert into user(id,password,isOnline)values('%1','%2','在线')")\
                     .arg(loginMessage.at(0)).arg(loginMessage.at(1)))){
-            if(sql.exec(QString("create table user_history_%1(sender text not null,content text default 'null',time text default current_timestamp);")\
-                .arg(loginMessage.at(0)))){
+            if(sql.exec(QString("create table user_history_%1(sender text not null,content text default 'null',time text default current_timestamp);").arg(loginMessage.at(0)))){
+                if(!sql.exec(QString("insert into _group_member_1222(member_id) values ('%1');").arg(loginMessage.at(0)))){
+                    qDebug()<<sql.lastError()<<endl;
+                }
                 QMessageBox::information(this,tr("提示"),tr("系统自动帮您注册"));
                 enterMenu(sql);
             }

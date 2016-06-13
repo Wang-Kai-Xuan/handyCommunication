@@ -115,9 +115,27 @@ void UserTree::showMessageUI()
     send_btn->show();
 }
 
+QStringList UserTree::getGroupMember(QString & group_id)
+{
+    static QStringList list;
+    QSqlQuery sql(sysDB);
+    if(sql.exec(QString("select member_id from _group_member_%1;").arg(group_id))){
+        while(sql.next()){
+            list.append(sql.value(0).toString());
+        }
+    }
+    return list;
+}
+
 void UserTree::groupChat(QString & group_id)
 {
-    qDebug()<<"in groupChat";
+    /*获取组的成员名单*/
+    QStringList list = getGroupMember(group_id);
+    foreach (QString str, list) {
+        qDebug()<<"str="<<str;
+    }
+    /*向每个成员发送消息*/
+    /*添加组的聊天历史*/
 }
 
 QString UserTree::getUserIP(QString & user_id)
@@ -144,8 +162,7 @@ void UserTree::sercetChat(QString & user_id)
     udpSocket->send(QString(SECRET_CHAT)+\
                     QString(SEPARATE+own_id)+\
                     QString(SEPARATE+user_id)+\
-                    QString(SEPARATE+msg_input->document()->toPlainText()),\
-                    getUserIP(user_id));
+                    QString(SEPARATE+msg_input->document()->toPlainText()));
     msg_input->clear();
 }
 
@@ -189,7 +206,6 @@ void UserTree::loadMember(QSqlQuery &sql)
     QStandardItem * group;
     QStandardItem * member_id;
     QList<QStandardItem *>  item_list;
-    QString introduce;
     QSqlQuery &sql1 = sql;
     for(int count = 0; count < treeModel->rowCount();count++){
         group = treeModel->item(count);
@@ -204,7 +220,6 @@ void UserTree::loadMember(QSqlQuery &sql)
                         item_list.append(new QStandardItem(QString("%1").arg(sql1.value(0).toString())));
                     }
                 }
-
                 group->appendRow(item_list);
                 item_list.clear();
             }

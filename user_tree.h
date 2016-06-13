@@ -44,6 +44,8 @@ public:
     void loadAllUser();
     void loadMember(QSqlQuery &sql);
 
+    QStringList getGroupMember(QString &group_id);
+
 signals:
 
 public slots:

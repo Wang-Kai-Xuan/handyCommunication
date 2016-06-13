@@ -25,9 +25,7 @@ public:
     QLabel* lab_pic;
     QLabel* lab_title;
     void newCompoent();
-
     void setComponent();
-
     void setConnect();
 
 signals:

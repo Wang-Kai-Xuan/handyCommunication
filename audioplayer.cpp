@@ -28,7 +28,8 @@ void AudioPlayer::setComponent()
     hlay->addWidget(next_audio);
     hlay->addWidget(pre_audio);
 
-    glay->addWidget(lab_pic,0,0,1,1);
+    glay->addWidget(lab_title,0,0,1,1);
+    glay->addWidget(lab_pic,1,0,1,1);
     glay->addWidget(lab_signer,2,0,1,1);
     glay->addWidget(lab_artist,3,0,1,1);
     glay->addWidget(slider,4,0,1,1);

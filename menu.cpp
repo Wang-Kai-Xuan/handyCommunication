@@ -48,7 +48,7 @@ void Menu::setTab()
 {
     tab_widget->addTab(my_message,"我的消息");
     tab_widget->addTab(widget_broadcast,"广播");
-    tab_widget->addTab(user_tree,"用户树");
+    tab_widget->addTab(user_tree,"通讯列表");
     tab_widget->addTab(audio_player,"播放音频");
 //    tab_widget->addTab(new QWidget,"发送文件");
     tab_widget->addTab(user_info,"本人信息及设置");
