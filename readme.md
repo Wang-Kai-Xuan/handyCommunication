@@ -18,12 +18,16 @@
 
 # 截图
 ## Version1.9.2
-1. http://o7kxaen2p.bkt.clouddn.com/handyCommunication%E8%BD%AF%E4%BB%B6%E5%8A%9F%E8%83%BD%E6%88%AA%E5%9B%BE%20%285%29.png
-2. http://o7kxaen2p.bkt.clouddn.com/handyCommunication%E8%BD%AF%E4%BB%B6%E5%8A%9F%E8%83%BD%E6%88%AA%E5%9B%BE%20%281%29.png
-3. http://o7kxaen2p.bkt.clouddn.com/handyCommunication%E8%BD%AF%E4%BB%B6%E5%8A%9F%E8%83%BD%E6%88%AA%E5%9B%BE%20%282%29.png
-4. http://o7kxaen2p.bkt.clouddn.com/handyCommunication%E8%BD%AF%E4%BB%B6%E5%8A%9F%E8%83%BD%E6%88%AA%E5%9B%BE%20%283%29.png
-5. http://o7kxaen2p.bkt.clouddn.com/handyCommunication%E8%BD%AF%E4%BB%B6%E5%8A%9F%E8%83%BD%E6%88%AA%E5%9B%BE%20%284%29.png
-
+1. <img src= "http://o7kxaen2p.bkt.clouddn.com/handyCommunication%E8%BD%AF%E4%BB%B6%E5%8A%9F%E8%83%BD%E6%88%AA%E5%9B%BE%20%285%29.png">
+------------
+2. <img src= "http://o7kxaen2p.bkt.clouddn.com/handyCommunication%E8%BD%AF%E4%BB%B6%E5%8A%9F%E8%83%BD%E6%88%AA%E5%9B%BE%20%281%29.png">
+------------
+3. <img src= "http://o7kxaen2p.bkt.clouddn.com/handyCommunication%E8%BD%AF%E4%BB%B6%E5%8A%9F%E8%83%BD%E6%88%AA%E5%9B%BE%20%282%29.png">
+------------
+4. <img src= "http://o7kxaen2p.bkt.clouddn.com/handyCommunication%E8%BD%AF%E4%BB%B6%E5%8A%9F%E8%83%BD%E6%88%AA%E5%9B%BE%20%283%29.png">
+------------
+5. <img src= "http://o7kxaen2p.bkt.clouddn.com/handyCommunication%E8%BD%AF%E4%BB%B6%E5%8A%9F%E8%83%BD%E6%88%AA%E5%9B%BE%20%284%29.png">
+------------
 
 
 # 注意事项
